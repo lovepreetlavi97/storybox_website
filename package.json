@@ -1,0 +1,17 @@
+{
+  "name": "storybox",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "apps/server",
+    "apps/website",
+    "apps/admin"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "start": "npm run start --workspaces --if-present",
+    "install-all": "npm install"
+  }
+}

@@ -1,0 +1,36 @@
+# Dependency directories
+node_modules/
+jspm_packages/
+web_modules/
+
+# Next.js build outputs
+.next/
+out/
+
+# Production/Local build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Sensitive configurations and environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+
+# Local uploads and storage
+apps/server/uploads/
+uploads/
+
+# Debug and system logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.log
+
+# OS metadata
+.DS_Store
+Thumbs.db
