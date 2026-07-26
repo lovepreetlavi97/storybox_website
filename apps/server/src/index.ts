@@ -9,10 +9,16 @@ import { connectDB } from './db.js';
 import adminRoutes from './routes/admin.js';
 import publicRoutes from './routes/public.js';
 
-// Setup upload folders
+// Setup upload folders (only in development or if writable)
 const uploadDir = path.join(process.cwd(), 'uploads');
-fs.mkdirSync(path.join(uploadDir, 'images'), { recursive: true });
-fs.mkdirSync(path.join(uploadDir, 'audio'), { recursive: true });
+if (process.env.NODE_ENV !== 'production') {
+  try {
+    fs.mkdirSync(path.join(uploadDir, 'images'), { recursive: true });
+    fs.mkdirSync(path.join(uploadDir, 'audio'), { recursive: true });
+  } catch (err) {
+    console.warn('Could not create local upload directories:', err);
+  }
+}
 
 const PORT = Number(process.env.PORT) || 5000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/kuku-fm-clone';
@@ -46,12 +52,16 @@ fastify.register(multipart, {
   }
 });
 
-// Serve local uploads folder statically
-fastify.register(fastifyStatic, {
-  root: uploadDir,
-  prefix: '/uploads/', // Serve from /uploads/ path
-  decorateReply: false // Set to false to avoid collision with other static decorators
-});
+// Serve local uploads folder statically if it exists
+if (fs.existsSync(uploadDir)) {
+  fastify.register(fastifyStatic, {
+    root: uploadDir,
+    prefix: '/uploads/', // Serve from /uploads/ path
+    decorateReply: false // Set to false to avoid collision with other static decorators
+  });
+} else {
+  console.log('Skipping local static files serving (directory not found).');
+}
 
 // Status check route
 fastify.get('/health', async () => {
