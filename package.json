@@ -4,7 +4,6 @@
   "private": true,
   "workspaces": [
     "shared",
-    "apps/server",
     "apps/website",
     "apps/admin"
   ],
