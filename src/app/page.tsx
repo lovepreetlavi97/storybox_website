@@ -20,6 +20,16 @@ export default function Homepage() {
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [activeBannerIndex, setActiveBannerIndex] = useState(0);
+
+  const handleBannerScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const scrollLeft = e.currentTarget.scrollLeft;
+    const width = e.currentTarget.clientWidth;
+    if (width > 0) {
+      const index = Math.round(scrollLeft / width);
+      setActiveBannerIndex(index);
+    }
+  };
 
   useEffect(() => {
     async function fetchHomeFeeds() {
@@ -80,35 +90,38 @@ export default function Homepage() {
       {/* 1. HERO BANNER SLIDER CONTAINER */}
       {banners.length > 0 && (
         <section className="relative overflow-hidden rounded-2xl bg-zinc-950 border border-zinc-900">
-          <div className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar aspect-[16/10] sm:aspect-[21/9] lg:aspect-[24/9] min-h-[250px] sm:min-h-[300px]">
+          <div 
+            onScroll={handleBannerScroll}
+            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar aspect-[16/9] sm:aspect-[21/9] lg:aspect-[24/9] min-h-[200px] sm:min-h-[300px]"
+          >
             {banners.map((banner) => (
               <div 
                 key={banner._id}
-                className="w-full shrink-0 snap-start relative h-full flex flex-col justify-end p-5 sm:p-8 lg:p-12 min-h-[250px] sm:min-h-[300px]"
+                className="w-full shrink-0 snap-start relative h-full flex flex-col justify-end pb-8 pt-5 px-5 sm:p-8 lg:p-12 min-h-[200px] sm:min-h-[300px]"
               >
                 {/* Background Banner image */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img 
                   src={getMediaUrl(banner.imageUrl, API_BASE_URL)} 
                   alt={banner.title}
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-cover object-center"
                 />
                 {/* Dark overlay gradient for strong readability */}
                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/75 to-zinc-950/30"></div>
                 
                 {/* Banner Content overlay */}
                 <div className="relative max-w-lg space-y-2 sm:space-y-3 z-10">
-                  <h1 className="text-lg sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm line-clamp-2 leading-tight">
+                  <h1 className="text-base sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm line-clamp-2 leading-tight">
                     {banner.title}
                   </h1>
                   {banner.description && (
-                    <p className="text-zinc-300 text-xs sm:text-sm font-medium line-clamp-2 leading-relaxed">
+                    <p className="text-zinc-300 text-[10px] sm:text-sm font-medium line-clamp-2 leading-relaxed">
                       {banner.description}
                     </p>
                   )}
                   
                   {/* Banner CTA link */}
-                  <div className="pt-1 sm:pt-2">
+                  <div className="pt-0.5 sm:pt-2">
                     <Link 
                       href={
                         banner.linkType === 'audio' 
@@ -117,9 +130,9 @@ export default function Homepage() {
                           ? `/search?category=${encodeURIComponent(banner.linkValue)}` 
                           : banner.linkValue
                       }
-                      className="inline-flex items-center gap-1.5 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs px-4 py-2 sm:px-5 sm:py-2.5 rounded-full transition-all cursor-pointer hover:shadow-lg hover:shadow-rose-500/20"
+                      className="inline-flex items-center gap-1.5 bg-rose-500 hover:bg-rose-600 text-white font-bold text-[10px] sm:text-xs px-3.5 py-1.5 sm:px-5 sm:py-2.5 rounded-full transition-all cursor-pointer hover:shadow-lg hover:shadow-rose-500/20"
                     >
-                      <Play className="h-3.5 w-3.5 fill-current ml-0.5" />
+                      <Play className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-current ml-0.5" />
                       Listen Now
                     </Link>
                   </div>
@@ -127,6 +140,20 @@ export default function Homepage() {
               </div>
             ))}
           </div>
+
+          {/* Dynamic Swiper Dots Indicator */}
+          {banners.length > 1 && (
+            <div className="absolute bottom-3.5 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+              {banners.map((_, idx) => (
+                <div 
+                  key={idx}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    activeBannerIndex === idx ? 'w-4 bg-rose-500' : 'w-1.5 bg-zinc-600/70'
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </section>
       )}
 
