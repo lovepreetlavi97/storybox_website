@@ -21,7 +21,7 @@ export interface AudioPlayerContextType {
   autoNext: boolean;
   queue: IAudio[];
   currentIndex: number;
-  playAudio: (audio: IAudio, currentQueue?: IAudio[]) => void;
+  playAudio: (audio: IAudio, currentQueue?: IAudio[], startTime?: number) => void;
   pause: () => void;
   resume: () => void;
   togglePlay: () => void;
@@ -174,7 +174,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
   };
 
   // Play a specific audio item
-  const playAudio = (audio: IAudio, currentQueue: IAudio[] = []) => {
+  const playAudio = (audio: IAudio, currentQueue: IAudio[] = [], startTime?: number) => {
     if (!audioRef.current) return;
 
     const fullUrl = getMediaUrl(audio.audioUrl, API_BASE_URL);
@@ -185,9 +185,15 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       return;
     }
 
+    // Check if there is saved progress for this track
+    const saved = recentlyListened.find(item => item.audio._id === audio._id);
+    const initialTime = startTime ?? (saved ? saved.currentTime : 0);
+
     audioRef.current.src = fullUrl;
     audioRef.current.playbackRate = playbackSpeed;
     audioRef.current.volume = volume;
+    audioRef.current.currentTime = initialTime;
+    setCurrentTime(initialTime);
     
     audioRef.current.play()
       .then(() => {
