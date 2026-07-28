@@ -15,9 +15,7 @@ A high-performance, production-ready, lightweight audio streaming platform built
 
 ```text
 ├── apps/
-│   ├── server/      # Node.js + Fastify backend API (Port 5000)
-│   ├── website/     # Next.js 15 public streaming website (Port 3000)
-│   └── admin/       # Next.js 15 administrator dashboard (Port 3001)
+│   └── website/     # Next.js 15 public streaming website (Port 3000)
 ├── shared/          # Shared interfaces & types package
 ├── package.json     # Workspace management package configurations
 └── README.md
@@ -51,16 +49,14 @@ npm install
 
 ### 💻 Running Development Servers
 
-Start the Fastify API server, Next.js Website, and Next.js Admin Panel simultaneously with one command:
+Start the Next.js Website:
 
 ```bash
 npm run dev
 ```
 
-The apps will be available at:
+The app will be available at:
 - 🌐 **Public Website**: [http://localhost:3000](http://localhost:3000)
-- ⚙️ **Admin Control Panel**: [http://localhost:3001](http://localhost:3001)
-- 🔌 **Backend REST API**: [http://localhost:5000](http://localhost:5000)
 
 ---
 

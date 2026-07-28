@@ -4,8 +4,7 @@
   "private": true,
   "workspaces": [
     "shared",
-    "apps/website",
-    "apps/admin"
+    "apps/website"
   ],
   "scripts": {
     "dev": "npm run dev --workspaces --if-present --parallel",
