@@ -78,7 +78,7 @@ export interface PaginatedResponse<T> {
  * Handles absolute URLs (http, https, blob, data), relative server upload paths,
  * and fallbacks.
  */
-export function getMediaUrl(url?: string | null, defaultBaseUrl: string = 'http://localhost:5000'): string {
+export function getMediaUrl(url?: string | null, defaultBaseUrl: string = 'http://3.82.47.4:5000'): string {
   if (!url) return '';
   if (
     url.startsWith('http://') ||

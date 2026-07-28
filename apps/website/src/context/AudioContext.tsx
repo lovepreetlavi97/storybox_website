@@ -5,7 +5,7 @@ import { IAudio, getMediaUrl } from 'shared';
 
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL 
   ? process.env.NEXT_PUBLIC_API_URL.replace(/\/api\/?$/, '') 
-  : 'http://localhost:5000';
+  : 'http://3.82.47.4:5000';
 
 export interface RecentlyListenedItem {
   audio: IAudio;
