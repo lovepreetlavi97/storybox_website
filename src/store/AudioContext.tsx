@@ -35,6 +35,7 @@ export interface AudioPlayerContextType {
   wishlist: IAudio[];
   toggleWishlist: (audio: IAudio) => void;
   isInWishlist: (audioId: string) => boolean;
+  closePlayer: () => void;
 }
 
 export const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(undefined);
@@ -389,6 +390,11 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
     return wishlist.some((item) => item._id === audioId);
   };
 
+  const closePlayer = () => {
+    pause();
+    setCurrentAudio(null);
+  };
+
   const updateAutoNext = (val: boolean) => {
     setAutoNext(val);
     localStorage.setItem('player_autonext', val.toString());
@@ -420,6 +426,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         wishlist,
         toggleWishlist,
         isInWishlist,
+        closePlayer,
       }}
     >
       {children}

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { 
   Play, Pause, SkipForward, SkipBack, 
-  Volume2, VolumeX, Gauge, Music
+  Volume2, VolumeX, Gauge, Music, X
 } from 'lucide-react';
 import { useAudioPlayer } from '@/hooks';
 import { getMediaUrl, formatDuration } from '@/utils';
@@ -27,7 +27,8 @@ export function Player() {
     next,
     previous,
     queue,
-    currentIndex
+    currentIndex,
+    closePlayer
   } = useAudioPlayer();
 
   const [showSpeedMenu, setShowSpeedMenu] = useState(false);
@@ -57,8 +58,23 @@ export function Player() {
   return (
     <div className="fixed bottom-0 left-0 right-0 h-24 bg-zinc-900/98 backdrop-blur border-t border-zinc-800 px-4 md:px-8 flex items-center justify-between z-40 select-none shadow-2xl">
       
+      {/* Absolute Full-Width Thin Seek Bar on Top */}
+      <div className="absolute top-0 left-0 right-0 h-1.5 flex items-center group cursor-pointer z-50">
+        <input 
+          type="range"
+          min={0}
+          max={duration || 100}
+          value={currentTime}
+          onChange={handleSeekChange}
+          className="w-full h-1 bg-zinc-800 appearance-none cursor-pointer accent-rose-500 hover:h-1.5 transition-all outline-none"
+          style={{
+            background: `linear-gradient(to right, #f43f5e 0%, #f43f5e ${progressPercent}%, #27272a ${progressPercent}%, #27272a 100%)`
+          }}
+        />
+      </div>
+
       {/* LEFT: Thumbnail and Title Details */}
-      <div className="flex items-center gap-3 shrink-0 max-w-[160px] sm:max-w-xs min-w-0">
+      <div className="flex items-center gap-3 shrink-0 max-w-[150px] sm:max-w-xs min-w-0">
         <Link href={`/audio/${currentAudio.slug}`} className="shrink-0">
           {!imgError && thumbnailUrl ? (
             /* eslint-disable-next-line @next/next/no-img-element */
@@ -66,48 +82,48 @@ export function Player() {
               src={thumbnailUrl} 
               alt={currentAudio.title} 
               onError={() => setImgError(true)}
-              className="h-12 w-12 sm:h-14 sm:w-14 rounded-lg object-cover bg-zinc-850 shrink-0 border border-zinc-800 shadow-md"
+              className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg object-cover bg-zinc-850 shrink-0 border border-zinc-800 shadow-md"
             />
           ) : (
-            <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-lg bg-zinc-800 flex items-center justify-center border border-zinc-700 text-rose-500 shrink-0">
-              <Music className="h-5 w-5 sm:h-6 sm:w-6" />
+            <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg bg-zinc-800 flex items-center justify-center border border-zinc-700 text-rose-500 shrink-0">
+              <Music className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
           )}
         </Link>
         <div className="min-w-0">
           <Link 
             href={`/audio/${currentAudio.slug}`}
-            className="font-semibold text-xs sm:text-sm text-white hover:text-rose-500 hover:underline block truncate cursor-pointer"
+            className="font-semibold text-[11px] sm:text-sm text-white hover:text-rose-500 hover:underline block truncate cursor-pointer"
           >
             {currentAudio.title}
           </Link>
-          <span className="text-[10px] sm:text-xs text-zinc-400 block truncate">
+          <span className="text-[9px] sm:text-xs text-zinc-400 block truncate">
             {(currentAudio.category as any)?.name || 'Audiobook'}
           </span>
         </div>
       </div>
 
-      {/* CENTER: Playback Controls and Prominent Seek Bar */}
-      <div className="flex flex-col items-center flex-1 max-w-xl sm:max-w-2xl px-2 sm:px-6">
-        <div className="flex items-center gap-4 sm:gap-6 mb-1.5 sm:mb-2">
+      {/* CENTER: Playback Controls & Centered Timer */}
+      <div className="flex flex-col items-center justify-center flex-1 min-w-0 px-2">
+        <div className="flex items-center gap-4 sm:gap-6">
           <button 
             onClick={previous}
             disabled={queue.length <= 1 || currentIndex === 0}
             aria-label="Previous Track"
             className="text-zinc-400 hover:text-white transition-colors cursor-pointer disabled:opacity-30 disabled:hover:text-zinc-400 p-1"
           >
-            <SkipBack className="h-4.5 w-4.5 sm:h-5 sm:w-5 fill-current" />
+            <SkipBack className="h-4 w-4 sm:h-4.5 sm:w-4.5 fill-current" />
           </button>
           
           <button 
             onClick={togglePlay}
             aria-label={isPlaying ? "Pause" : "Play"}
-            className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer shadow-lg shadow-white/10"
+            className="h-8.5 w-8.5 sm:h-10 sm:w-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer shadow-lg shadow-white/10"
           >
             {isPlaying ? (
-              <Pause className="h-4.5 w-4.5 sm:h-5 sm:w-5 fill-current ml-0" />
+              <Pause className="h-4 w-4 sm:h-4.5 sm:w-4.5 fill-current ml-0" />
             ) : (
-              <Play className="h-4.5 w-4.5 sm:h-5 sm:w-5 fill-current ml-0.5" />
+              <Play className="h-4 w-4 sm:h-4.5 sm:w-4.5 fill-current ml-0.5" />
             )}
           </button>
 
@@ -117,37 +133,21 @@ export function Player() {
             aria-label="Next Track"
             className="text-zinc-400 hover:text-white transition-colors cursor-pointer disabled:opacity-30 disabled:hover:text-zinc-400 p-1"
           >
-            <SkipForward className="h-4.5 w-4.5 sm:h-5 sm:w-5 fill-current" />
+            <SkipForward className="h-4 w-4 sm:h-4.5 sm:w-4.5 fill-current" />
           </button>
         </div>
 
-        {/* Wide & Easy-to-Touch Seek Bar */}
-        <div className="w-full flex items-center gap-2 sm:gap-3">
-          <span className="text-[10px] font-mono text-zinc-400 w-8 text-right shrink-0">
-            {formatDuration(currentTime)}
-          </span>
-          <div className="flex-1 relative flex items-center py-2 group cursor-pointer">
-            <input 
-              type="range"
-              min={0}
-              max={duration || 100}
-              value={currentTime}
-              onChange={handleSeekChange}
-              className="w-full h-2.5 sm:h-3 bg-zinc-800 rounded-full appearance-none cursor-pointer accent-rose-500 hover:h-3.5 transition-all outline-none shadow-inner"
-              style={{
-                background: `linear-gradient(to right, #f43f5e 0%, #f43f5e ${progressPercent}%, #27272a ${progressPercent}%, #27272a 100%)`
-              }}
-            />
-          </div>
-          <span className="text-[10px] font-mono text-zinc-400 w-8 shrink-0">
-            {formatDuration(duration)}
-          </span>
+        {/* Centered Timer indicator */}
+        <div className="flex items-center gap-1.5 mt-1 text-[9.5px] sm:text-[10px] font-mono text-zinc-400">
+          <span>{formatDuration(currentTime)}</span>
+          <span className="text-zinc-600">/</span>
+          <span>{formatDuration(duration)}</span>
         </div>
       </div>
 
-      {/* RIGHT: Volume, Speed and Autoplay Options */}
-      <div className="flex items-center justify-end gap-6 w-1/3">
-        {/* Auto Next Switch */}
+      {/* RIGHT: Volume, Speed & Close Control */}
+      <div className="flex items-center justify-end gap-3 sm:gap-5 shrink-0">
+        {/* Auto Next Switch (Hidden on mobile) */}
         <label className="hidden lg:flex items-center gap-2 cursor-pointer text-xs">
           <input
             type="checkbox"
@@ -162,14 +162,14 @@ export function Player() {
         <div className="relative">
           <button
             onClick={() => setShowSpeedMenu(!showSpeedMenu)}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-750 border border-zinc-800 text-xs font-semibold text-zinc-300 hover:text-white transition-all cursor-pointer"
+            className="flex items-center gap-1 px-1.5 sm:px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-750 border border-zinc-800 text-[10px] sm:text-xs font-semibold text-zinc-300 hover:text-white transition-all cursor-pointer"
           >
-            <Gauge className="h-3.5 w-3.5 text-rose-500" />
+            <Gauge className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-rose-500" />
             <span>{playbackSpeed}x</span>
           </button>
 
           {showSpeedMenu && (
-            <div className="absolute bottom-12 right-0 bg-zinc-900 border border-zinc-800 rounded-xl p-1.5 flex flex-col gap-1 w-24 shadow-2xl z-50">
+            <div className="absolute bottom-12 right-0 bg-zinc-900 border border-zinc-800 rounded-xl p-1.5 flex flex-col gap-1 w-20 sm:w-24 shadow-2xl z-50">
               {speeds.map((s) => (
                 <button
                   key={s}
@@ -177,7 +177,7 @@ export function Player() {
                     setPlaybackSpeed(s);
                     setShowSpeedMenu(false);
                   }}
-                  className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
+                  className={`w-full text-left px-2.5 py-1.5 rounded-lg text-[10px] sm:text-xs font-semibold cursor-pointer transition-all ${
                     playbackSpeed === s
                       ? 'bg-rose-500 text-white'
                       : 'text-zinc-400 hover:bg-zinc-850 hover:text-white'
@@ -190,13 +190,13 @@ export function Player() {
           )}
         </div>
 
-        {/* Volume controls */}
-        <div className="hidden sm:flex items-center gap-2.5 w-28">
+        {/* Volume controls (Hidden on mobile) */}
+        <div className="hidden sm:flex items-center gap-2 w-24 md:w-28">
           <button 
             onClick={handleVolumeToggle}
             className="text-zinc-400 hover:text-white transition-colors cursor-pointer"
           >
-            {volume === 0 ? <VolumeX className="h-4.5 w-4.5" /> : <Volume2 className="h-4.5 w-4.5" />}
+            {volume === 0 ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
           </button>
           <input
             type="range"
@@ -211,8 +211,17 @@ export function Player() {
             }}
           />
         </div>
+
+        {/* Close/Stop Button (Cross icon) */}
+        <button
+          onClick={closePlayer}
+          aria-label="Stop & Close Player"
+          className="p-1 text-zinc-400 hover:text-white rounded-full hover:bg-zinc-805 active:scale-95 transition-all shrink-0 cursor-pointer ml-1"
+        >
+          <X className="h-4.5 w-4.5" />
+        </button>
       </div>
-      
+
     </div>
   );
 }
