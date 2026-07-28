@@ -132,7 +132,7 @@ export default function Homepage() {
 
       {/* 2. CATEGORIES SELECTOR TABS */}
       {categories.length > 0 && (
-        <section className="space-y-4">
+        <section id="categories" className="space-y-4 scroll-mt-20">
           <h2 className="text-xl font-extrabold tracking-tight text-white sm:text-2xl">Browse Categories</h2>
           <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar scroll-smooth">
             {categories.map((cat) => (
@@ -151,7 +151,7 @@ export default function Homepage() {
 
       {/* 3. RECENTLY LISTENED SHELF */}
       {recentlyListened && recentlyListened.length > 0 && (
-        <section className="space-y-4">
+        <section id="recently-listened" className="space-y-4 scroll-mt-20">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-extrabold tracking-tight text-white sm:text-2xl">Recently Listened</h2>
           </div>

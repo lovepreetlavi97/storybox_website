@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Search } from 'lucide-react';
+import { Search, Heart } from 'lucide-react';
 
 export function Header() {
   return (
@@ -25,14 +25,22 @@ export function Header() {
           
           <nav className="hidden md:flex items-center gap-6 text-sm font-semibold text-zinc-400">
             <Link href="/" className="text-white hover:text-red-500 transition-colors">Popular</Link>
-            <Link href="/" className="hover:text-red-500 transition-colors">Audiobooks</Link>
-            <Link href="/" className="hover:text-red-500 transition-colors">Originals</Link>
-            <Link href="/" className="hover:text-red-500 transition-colors text-red-500">New & Hot</Link>
+            <Link href="/#recently-listened" className="hover:text-red-500 transition-colors">Recently Listened</Link>
+            <Link href="/#categories" className="hover:text-red-500 transition-colors">Categories</Link>
           </nav>
         </div>
 
         {/* Right Menu Controls */}
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-2">
+          {/* Wishlist Heart Icon */}
+          <Link 
+            href="/wishlist" 
+            className="p-2 text-zinc-400 hover:text-white rounded-full hover:bg-zinc-900 transition-all"
+            title="Wishlist"
+          >
+            <Heart className="h-5 w-5" />
+          </Link>
+          
           {/* Search Bar Icon */}
           <Link 
             href="/search" 

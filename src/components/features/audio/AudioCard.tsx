@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Play, Pause, Clock } from 'lucide-react';
+import { Play, Pause, Clock, Heart } from 'lucide-react';
 import { IAudio } from '@/types';
 import { getMediaUrl, formatDuration } from '@/utils';
 import { API_BASE_URL } from '@/constants/config';
@@ -15,15 +15,22 @@ interface AudioCardProps {
 }
 
 export function AudioCard({ audio, queueList = [], progress }: AudioCardProps) {
-  const { currentAudio, isPlaying, playAudio } = useAudioPlayer();
+  const { currentAudio, isPlaying, playAudio, toggleWishlist, isInWishlist } = useAudioPlayer();
 
   const isCurrent = currentAudio?._id === audio._id;
   const isPlayingThis = isCurrent && isPlaying;
+  const isFav = isInWishlist(audio._id);
 
   const handleCardPlay = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     playAudio(audio, queueList.length > 0 ? queueList : [audio]);
+  };
+
+  const handleWishlistToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleWishlist(audio);
   };
 
   const formattedDuration = (secs: number) => {
@@ -46,6 +53,19 @@ export function AudioCard({ audio, queueList = [], progress }: AudioCardProps) {
 
           {/* Gradient Overlay for luxury touch */}
           <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-zinc-950/20 to-transparent opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-500" />
+
+          {/* Wishlist Heart Button */}
+          <button
+            onClick={handleWishlistToggle}
+            aria-label={isFav ? "Remove from wishlist" : "Add to wishlist"}
+            className="absolute top-2.5 right-2.5 h-8 w-8 rounded-full bg-zinc-950/60 backdrop-blur-md flex items-center justify-center border border-white/10 hover:bg-zinc-900 active:scale-95 transition-all duration-300 z-10 cursor-pointer text-zinc-300 hover:text-white"
+          >
+            <Heart 
+              className={`h-4.5 w-4.5 transition-colors ${
+                isFav ? 'fill-rose-500 text-rose-500' : 'text-zinc-300 hover:text-rose-400'
+              }`} 
+            />
+          </button>
 
           {/* Always Visible Play/Pause Button on Every Card */}
           <button

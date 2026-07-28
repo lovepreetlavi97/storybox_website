@@ -32,6 +32,9 @@ export interface AudioPlayerContextType {
   next: () => void;
   previous: () => void;
   recentlyListened: RecentlyListenedItem[];
+  wishlist: IAudio[];
+  toggleWishlist: (audio: IAudio) => void;
+  isInWishlist: (audioId: string) => boolean;
 }
 
 export const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(undefined);
@@ -48,6 +51,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
   const [currentIndex, setCurrentIndex] = useState(-1);
 
   const [recentlyListened, setRecentlyListened] = useState<RecentlyListenedItem[]>([]);
+  const [wishlist, setWishlist] = useState<IAudio[]>([]);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -110,6 +114,48 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         })();
       } catch (e) {
         console.error('Failed to parse recently listened from localStorage:', e);
+      }
+    }
+
+    // Load and validate wishlist
+    const savedWishlist = localStorage.getItem('user_wishlist');
+    if (savedWishlist) {
+      try {
+        const parsed = JSON.parse(savedWishlist);
+        setWishlist(parsed);
+        
+        // Background check to remove deleted audiobooks from wishlist
+        (async () => {
+          if (!Array.isArray(parsed) || parsed.length === 0) return;
+          try {
+            const validated = await Promise.all(
+              parsed.map(async (audio: any) => {
+                if (!audio || !audio.slug) return null;
+                try {
+                  const res = await fetch(`${API_BASE_URL}/api/public/audios/${audio.slug}`, { cache: 'no-store' });
+                  if (res.ok) {
+                    const data = await res.json();
+                    if (data.success && data.data) {
+                      return audio;
+                    }
+                  }
+                } catch (e) {
+                  // Ignore
+                }
+                return null;
+              })
+            );
+            const cleanList = validated.filter(Boolean) as IAudio[];
+            if (cleanList.length !== parsed.length) {
+              setWishlist(cleanList);
+              localStorage.setItem('user_wishlist', JSON.stringify(cleanList));
+            }
+          } catch (err) {
+            console.error('Wishlist validation error:', err);
+          }
+        })();
+      } catch (e) {
+        console.error('Failed to parse wishlist from localStorage:', e);
       }
     }
 
@@ -325,6 +371,24 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
     }
   };
 
+  const toggleWishlist = (audio: IAudio) => {
+    setWishlist((prev) => {
+      const exists = prev.some((item) => item._id === audio._id);
+      let updated;
+      if (exists) {
+        updated = prev.filter((item) => item._id !== audio._id);
+      } else {
+        updated = [...prev, audio];
+      }
+      localStorage.setItem('user_wishlist', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const isInWishlist = (audioId: string) => {
+    return wishlist.some((item) => item._id === audioId);
+  };
+
   const updateAutoNext = (val: boolean) => {
     setAutoNext(val);
     localStorage.setItem('player_autonext', val.toString());
@@ -353,6 +417,9 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         next,
         previous,
         recentlyListened,
+        wishlist,
+        toggleWishlist,
+        isInWishlist,
       }}
     >
       {children}
