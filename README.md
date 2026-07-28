@@ -1,78 +1,36 @@
-# Ultra-Fast Audio Streaming Platform (Kuku FM Clone)
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-A high-performance, production-ready, lightweight audio streaming platform built for rapid launch (MVP). Designed with custom HSL dark-theme layouts, index-optimized MongoDB retrieval, and zero-overhead file streaming.
+## Getting Started
 
-## 🛠️ Technology Stack
-
-- **Monorepo Manager**: Npm Workspaces
-- **Public Website & Admin Panel**: Next.js 15, React 19, TypeScript, Tailwind CSS v4, Lucide Icons
-- **Backend API Server**: Node.js, Fastify, Mongoose (MongoDB)
-- **Shared Types Layer**: Single-package TypeScript structures
-
----
-
-## 📁 Repository Structure
-
-```text
-├── apps/
-│   └── website/     # Next.js 15 public streaming website (Port 3000)
-├── shared/          # Shared interfaces & types package
-├── package.json     # Workspace management package configurations
-└── README.md
-```
-
----
-
-## ⚡ Key Optimizations (10,000+ Concurrent Users)
-
-1. **In-Memory Cache**: Public streaming feeds (Featured, Trending, Latest, and Categories) are cached for 10-30 seconds on the Fastify instance, bypassing DB querying during peak concurrent spikes.
-2. **Database Indexes**: Compound indexes on Mongoose schemas cover filtering properties (`featured`, `trending`, `published`, `category`), and a `text` search index speeds up text search queries.
-3. **Local Multipart Storage**: Multipart audio uploads are streamed directly to disk (`uploads/audio` and `uploads/images`) via pipeline pipes, avoiding high-RAM buffers on Node.js.
-4. **Lightweight Controls**: Built using HTML5 audio elements and vanilla client states, avoiding heavy player libraries or custom wrappers.
-
----
-
-## 🚀 Getting Started
-
-### 📋 Prerequisites
-
-- **Node.js**: v20 or later
-- **MongoDB**: A running local instance of MongoDB at `mongodb://localhost:27017/kuku-fm-clone` (or edit `apps/server/.env` to point to a remote URI).
-
-### ⚙️ Installation
-
-In the root directory, install all workspace dependencies:
-
-```bash
-npm install
-```
-
-### 💻 Running Development Servers
-
-Start the Next.js Website:
+First, run the development server:
 
 ```bash
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-The app will be available at:
-- 🌐 **Public Website**: [http://localhost:3000](http://localhost:3000)
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
----
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## 🔑 Administrator Credentials
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-To manage your categories, upload audio titles, and publish banners, log into the Admin Control Panel using:
+## Learn More
 
-- **Username**: `admin`
-- **Password**: `adminpassword`
+To learn more about Next.js, take a look at the following resources:
 
-*(These can be updated anytime inside `apps/server/.env`)*
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
----
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## 📂 Customizing Storage Backend
+## Deploy on Vercel
 
-This application saves uploads to the local filesystem (`/uploads`). If you wish to migrate to AWS S3, Cloudflare R2, or DigitalOcean Spaces in the future:
-1. Replace Fastify's `/upload/image` and `/upload/audio` route handlers inside `apps/server/src/routes/admin.ts` with your cloud bucket upload client (e.g. `@aws-sdk/client-s3`).
-2. Update references to `thumbnailUrl` and `audioUrl` returned by the upload endpoint to point to your CDN bucket URL instead of the local server prefix.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

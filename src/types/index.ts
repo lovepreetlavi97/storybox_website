@@ -15,7 +15,7 @@ export interface IAudio {
   thumbnailUrl: string;
   audioUrl: string;
   duration: number; // in seconds
-  category: string; // Category ID or name? Standard: Reference to Category ID, or populate
+  category: string;
   language: string;
   featured: boolean;
   trending: boolean;
@@ -30,7 +30,7 @@ export interface IBanner {
   title: string;
   description?: string;
   linkType: 'audio' | 'category' | 'external';
-  linkValue: string; // Slug or external URL
+  linkValue: string;
   published: boolean;
   createdAt: string;
   updatedAt: string;
@@ -104,4 +104,3 @@ export function formatDuration(secs?: number): string {
   const remainingSecs = Math.floor(secs % 60);
   return `${mins}:${remainingSecs.toString().padStart(2, '0')}`;
 }
-
