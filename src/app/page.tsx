@@ -2,12 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Play, Pause, ChevronRight, BookOpen, Clock, Music } from 'lucide-react';
-import { useAudioPlayer, API_BASE_URL } from '../context/AudioContext';
-import { IAudio, IBanner, ICategory, getMediaUrl, formatDuration } from 'shared';
+import { Play, BookOpen } from 'lucide-react';
+import { useAudioPlayer } from '@/hooks';
+import { publicService } from '@/services';
+import { IAudio, IBanner, ICategory } from '@/types';
+import { getMediaUrl } from '@/utils';
+import { API_BASE_URL } from '@/constants/config';
+import { AudioRow, AudioCard } from '@/components/features';
 
 export default function Homepage() {
-  const { currentAudio, isPlaying, playAudio, recentlyListened } = useAudioPlayer();
+  const { recentlyListened } = useAudioPlayer();
 
   const [banners, setBanners] = useState<IBanner[]>([]);
   const [featured, setFeatured] = useState<IAudio[]>([]);
@@ -21,18 +25,18 @@ export default function Homepage() {
     async function fetchHomeFeeds() {
       try {
         const [bannersRes, featuredRes, trendingRes, latestRes, categoriesRes] = await Promise.all([
-          fetch(`${API_BASE_URL}/api/public/banners`).then((r) => r.json()),
-          fetch(`${API_BASE_URL}/api/public/audios/featured`).then((r) => r.json()),
-          fetch(`${API_BASE_URL}/api/public/audios/trending`).then((r) => r.json()),
-          fetch(`${API_BASE_URL}/api/public/audios/latest`).then((r) => r.json()),
-          fetch(`${API_BASE_URL}/api/public/categories`).then((r) => r.json()),
+          publicService.fetchBanners(),
+          publicService.fetchFeaturedAudios(),
+          publicService.fetchTrendingAudios(),
+          publicService.fetchLatestAudios(),
+          publicService.fetchCategories(),
         ]);
 
-        if (bannersRes.success) setBanners(bannersRes.data);
-        if (featuredRes.success) setFeatured(featuredRes.data);
-        if (trendingRes.success) setTrending(trendingRes.data);
-        if (latestRes.success) setLatest(latestRes.data);
-        if (categoriesRes.success) setCategories(categoriesRes.data);
+        if (bannersRes.success && bannersRes.data) setBanners(bannersRes.data);
+        if (featuredRes.success && featuredRes.data) setFeatured(featuredRes.data);
+        if (trendingRes.success && trendingRes.data) setTrending(trendingRes.data);
+        if (latestRes.success && latestRes.data) setLatest(latestRes.data);
+        if (categoriesRes.success && categoriesRes.data) setCategories(categoriesRes.data);
       } catch (err: any) {
         console.error('Failed to load public feeds:', err);
         setError('Unable to reach streaming servers. Ensure the backend is active.');
@@ -43,17 +47,6 @@ export default function Homepage() {
 
     fetchHomeFeeds();
   }, []);
-
-  const formatDuration = (secs: number) => {
-    const mins = Math.floor(secs / 60);
-    return `${mins} min`;
-  };
-
-  const handleCardPlay = (e: React.MouseEvent, audio: IAudio, feed: IAudio[]) => {
-    e.preventDefault();
-    e.stopPropagation();
-    playAudio(audio, feed);
-  };
 
   if (loading) {
     return (
@@ -80,83 +73,6 @@ export default function Homepage() {
       </div>
     );
   }
-
-  // Audio Row Component to avoid duplication
-  const AudioRow = ({ title, data }: { title: string; data: IAudio[] }) => {
-    if (data.length === 0) return null;
-    return (
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-extrabold tracking-tight text-white sm:text-2xl">{title}</h2>
-          <Link href="/search" className="text-xs font-semibold text-zinc-400 hover:text-white flex items-center gap-0.5 transition-colors">
-            See all
-            <ChevronRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
-
-        {/* Scrolling Cards Row */}
-        <div className="flex gap-5 overflow-x-auto pb-4 pt-1 no-scrollbar snap-x scroll-smooth">
-          {data.map((audio) => {
-            const isCurrent = currentAudio?._id === audio._id;
-            const isPlayingThis = isCurrent && isPlaying;
-
-            return (
-              <div 
-                key={audio._id}
-                className="w-40 sm:w-44 shrink-0 snap-start bg-transparent p-1.5 transition-all duration-500 hover:-translate-y-1.5 group relative"
-              >
-                <Link href={`/audio/${audio.slug}`} className="block">
-                  {/* Thumbnail Container */}
-                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-zinc-950 border border-white/[0.03] transition-all duration-550 group-hover:shadow-2xl group-hover:shadow-rose-500/10 group-hover:border-white/[0.08]">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img 
-                      src={getMediaUrl(audio.thumbnailUrl, API_BASE_URL)} 
-                      alt={audio.title}
-                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-106"
-                      loading="lazy"
-                    />
-
-                    {/* Gradient Overlay for luxury touch */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-zinc-950/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                    {/* Spotify Hover Play Button */}
-                    <button
-                      onClick={(e) => handleCardPlay(e, audio, data)}
-                      className={`absolute bottom-3 right-3 h-10 w-10 rounded-full bg-white/90 hover:bg-rose-500 text-zinc-900 hover:text-white backdrop-blur-sm flex items-center justify-center shadow-xl shadow-black/25 hover:shadow-rose-500/30 hover:scale-105 transition-all duration-300 transform cursor-pointer ${
-                        isCurrent 
-                          ? 'opacity-100 scale-100' 
-                          : 'opacity-0 scale-90 translate-y-2 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0'
-                      }`}
-                    >
-                      {isPlayingThis ? (
-                        <Pause className="h-4.5 w-4.5 fill-current ml-0" />
-                      ) : (
-                        <Play className="h-4.5 w-4.5 fill-current ml-0.5" />
-                      )}
-                    </button>
-
-
-                  </div>
-
-                  {/* Title & Info */}
-                  <h3 className="font-extrabold text-sm text-zinc-100 tracking-tight group-hover:text-rose-400 transition-colors duration-300 line-clamp-1 mt-1">
-                    {audio.title}
-                  </h3>
-                  <div className="flex items-center justify-between mt-1 text-[9.5px] tracking-wide text-zinc-500 uppercase font-bold">
-                    <span className="truncate max-w-[85px]">{(audio.category as any)?.name || 'Audiobook'}</span>
-                    <span className="flex items-center gap-0.5 shrink-0 font-mono text-[10px] text-zinc-400 font-medium lowercase">
-                      <Clock className="h-3 w-3 text-rose-500/70" />
-                      {formatDuration(audio.duration)}
-                    </span>
-                  </div>
-                </Link>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-12">
@@ -232,81 +148,27 @@ export default function Homepage() {
           </div>
         </section>
       )}
-      {/* Recently Listened Shelf */}
+
+      {/* 3. RECENTLY LISTENED SHELF */}
       {recentlyListened && recentlyListened.length > 0 && (
         <section className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-extrabold tracking-tight text-white sm:text-2xl">Recently Listened</h2>
           </div>
           <div className="flex gap-5 overflow-x-auto pb-4 pt-1 no-scrollbar snap-x scroll-smooth">
-            {recentlyListened.map((item) => {
-              const isCurrent = currentAudio?._id === item.audio._id;
-              const isPlayingThis = isCurrent && isPlaying;
-
-              return (
-                <div 
-                  key={item.audio._id}
-                  className="w-40 sm:w-44 shrink-0 snap-start bg-transparent p-1.5 transition-all duration-500 hover:-translate-y-1.5 group relative"
-                >
-                  <Link href={`/audio/${item.audio.slug}`} className="block">
-                    {/* Thumbnail Container */}
-                    <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-zinc-950 border border-white/[0.03] transition-all duration-550 group-hover:shadow-2xl group-hover:shadow-rose-500/10 group-hover:border-white/[0.08]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img 
-                        src={getMediaUrl(item.audio.thumbnailUrl, API_BASE_URL)} 
-                        alt={item.audio.title}
-                        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-106"
-                        loading="lazy"
-                      />
-
-                      {/* Gradient Overlay for luxury touch */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-zinc-950/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                      {/* Spotify Hover Play Button */}
-                      <button
-                        onClick={(e) => handleCardPlay(e, item.audio, recentlyListened.map(r => r.audio))}
-                        className={`absolute bottom-3 right-3 h-10 w-10 rounded-full bg-white/90 hover:bg-rose-500 text-zinc-900 hover:text-white backdrop-blur-sm flex items-center justify-center shadow-xl shadow-black/25 hover:shadow-rose-500/30 hover:scale-105 transition-all duration-300 transform cursor-pointer ${
-                          isCurrent 
-                            ? 'opacity-100 scale-100' 
-                            : 'opacity-0 scale-90 translate-y-2 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0'
-                        }`}
-                      >
-                        {isPlayingThis ? (
-                          <Pause className="h-4.5 w-4.5 fill-current ml-0" />
-                        ) : (
-                          <Play className="h-4.5 w-4.5 fill-current ml-0.5" />
-                        )}
-                      </button>
-
-                      {/* Red progress line showing how much is listened */}
-                      <div className="absolute bottom-0 left-0 right-0 h-1 bg-zinc-900/60 backdrop-blur-xs overflow-hidden">
-                        <div 
-                          className="h-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.9)] transition-all duration-500" 
-                          style={{ width: `${Math.min(100, Math.max(0, item.progress))}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Title & Info */}
-                    <h3 className="font-extrabold text-sm text-zinc-100 tracking-tight group-hover:text-rose-400 transition-colors duration-300 line-clamp-1 mt-1">
-                      {item.audio.title}
-                    </h3>
-                    <div className="flex items-center justify-between mt-1 text-[9.5px] tracking-wide text-zinc-500 uppercase font-bold">
-                      <span className="truncate max-w-[85px]">{(item.audio.category as any)?.name || 'Audiobook'}</span>
-                      <span className="flex items-center gap-0.5 shrink-0 font-mono text-[10px] text-zinc-400 font-medium lowercase">
-                        <Clock className="h-3 w-3 text-rose-500/70" />
-                        {formatDuration(item.audio.duration)}
-                      </span>
-                    </div>
-                  </Link>
-                </div>
-              );
-            })}
+            {recentlyListened.map((item) => (
+              <AudioCard 
+                key={item.audio._id}
+                audio={item.audio}
+                queueList={recentlyListened.map(r => r.audio)}
+                progress={item.progress}
+              />
+            ))}
           </div>
         </section>
       )}
 
-      {/* 3. FEEDS GRID ROWS */}
+      {/* 4. FEEDS GRID ROWS */}
       <section className="space-y-10">
         <AudioRow title="Featured Audiobooks" data={featured} />
         <AudioRow title="Trending Now" data={trending} />

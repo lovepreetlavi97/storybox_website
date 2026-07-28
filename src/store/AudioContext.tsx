@@ -1,11 +1,9 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { IAudio, getMediaUrl } from 'shared';
-
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL 
-  ? process.env.NEXT_PUBLIC_API_URL.replace(/\/api\/?$/, '') 
-  : 'http://3.82.47.4:5000';
+import { IAudio } from '@/types';
+import { getMediaUrl } from '@/utils/media';
+import { API_BASE_URL } from '@/constants/config';
 
 export interface RecentlyListenedItem {
   audio: IAudio;
@@ -13,7 +11,7 @@ export interface RecentlyListenedItem {
   progress: number;
 }
 
-interface AudioPlayerContextType {
+export interface AudioPlayerContextType {
   currentAudio: IAudio | null;
   isPlaying: boolean;
   playbackSpeed: number;
@@ -36,7 +34,7 @@ interface AudioPlayerContextType {
   recentlyListened: RecentlyListenedItem[];
 }
 
-const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(undefined);
+export const AudioPlayerContext = createContext<AudioPlayerContextType | undefined>(undefined);
 
 export function AudioPlayerProvider({ children }: { children: React.ReactNode }) {
   const [currentAudio, setCurrentAudio] = useState<IAudio | null>(null);

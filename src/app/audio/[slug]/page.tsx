@@ -4,10 +4,14 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   Play, Pause, Clock, Globe, BookOpen, 
-  ChevronRight, Calendar, Volume2, ArrowLeft 
+  ArrowLeft 
 } from 'lucide-react';
-import { useAudioPlayer, API_BASE_URL } from '../../../context/AudioContext';
-import { IAudio, getMediaUrl, formatDuration } from 'shared';
+import { useAudioPlayer } from '@/hooks';
+import { publicService } from '@/services';
+import { IAudio } from '@/types';
+import { getMediaUrl, formatDuration } from '@/utils';
+import { API_BASE_URL } from '@/constants/config';
+import { AudioCard } from '@/components/features';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -31,20 +35,19 @@ export default function AudioDetailsPage({ params }: PageProps) {
         setError('');
 
         // Fetch details by slug
-        const res = await fetch(`${API_BASE_URL}/api/public/audios/${slug}`);
-        const data = await res.json();
+        const res = await publicService.getAudioBySlug(slug);
 
-        if (data.success && data.data) {
-          setAudio(data.data);
+        if (res.success && res.data) {
+          setAudio(res.data);
           
           // Fetch related
-          const relRes = await fetch(`${API_BASE_URL}/api/public/audios/${data.data._id}/related`);
+          const relRes = await fetch(`${API_BASE_URL}/api/public/audios/${res.data._id}/related`);
           const relData = await relRes.json();
           if (relData.success) {
             setRelated(relData.data);
           }
         } else {
-          setError(data.error || 'Audiobook not found');
+          setError(res.error || 'Audiobook not found');
         }
       } catch (err: any) {
         console.error('Error loading audiobook details:', err);
@@ -64,7 +67,7 @@ export default function AudioDetailsPage({ params }: PageProps) {
     playAudio(audio, [audio, ...related]);
   };
 
-  const formatDuration = (secs: number) => {
+  const formattedDetailedDuration = (secs: number) => {
     const mins = Math.floor(secs / 60);
     const remainingSecs = secs % 60;
     return `${mins}:${remainingSecs.toString().padStart(2, '0')} minutes`;
@@ -142,7 +145,7 @@ export default function AudioDetailsPage({ params }: PageProps) {
               </span>
               <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-mono font-bold bg-zinc-900 text-zinc-300 border border-zinc-800">
                 <Clock className="h-3.5 w-3.5 text-zinc-500" />
-                {formatDuration(audio.duration)}
+                {formattedDetailedDuration(audio.duration)}
               </span>
             </div>
 
@@ -189,54 +192,9 @@ export default function AudioDetailsPage({ params }: PageProps) {
           </h2>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-            {related.map((item) => {
-              const isCurrent = currentAudio?._id === item._id;
-              const isPlayingThis = isCurrent && isPlaying;
-
-              return (
-                <div 
-                  key={item._id}
-                  className="bg-zinc-900/40 hover:bg-zinc-900 border border-zinc-900 hover:border-zinc-850 rounded-2xl p-3 transition-all duration-200 group relative"
-                >
-                  <Link href={`/audio/${item.slug}`} className="block">
-                    <div className="relative aspect-[3/4] rounded-xl overflow-hidden bg-zinc-950 shadow mb-3">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img 
-                        src={getMediaUrl(item.thumbnailUrl, API_BASE_URL)} 
-                        alt={item.title}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          playAudio(item, [item, ...related]);
-                        }}
-                        className={`absolute bottom-2.5 right-2.5 h-8.5 w-8.5 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-lg transition-all duration-200 transform cursor-pointer ${
-                          isCurrent 
-                            ? 'opacity-100 scale-100' 
-                            : 'opacity-0 scale-90 translate-y-1.5 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0'
-                        } hover:bg-rose-600`}
-                      >
-                        {isPlayingThis ? (
-                          <Pause className="h-4 w-4 fill-current ml-0" />
-                        ) : (
-                          <Play className="h-4 w-4 fill-current ml-0.5" />
-                        )}
-                      </button>
-                    </div>
-
-                    <h3 className="font-bold text-xs sm:text-sm text-zinc-100 group-hover:text-rose-500 transition-colors line-clamp-1">
-                      {item.title}
-                    </h3>
-                    <p className="text-[10px] text-zinc-500 font-medium mt-0.5">
-                      {item.language} &bull; {formatDuration(item.duration)}
-                    </p>
-                  </Link>
-                </div>
-              );
-            })}
+            {related.map((item) => (
+              <AudioCard key={item._id} audio={item} queueList={[item, ...related]} />
+            ))}
           </div>
         </section>
       )}

@@ -2,14 +2,13 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import { Search as SearchIcon, VolumeX, Play, Pause, X, Clock, FolderKanban } from 'lucide-react';
-import { useAudioPlayer, API_BASE_URL } from '../../context/AudioContext';
-import { IAudio, ICategory, getMediaUrl, formatDuration } from 'shared';
+import { Search as SearchIcon, VolumeX, X, FolderKanban } from 'lucide-react';
+import { publicService } from '@/services';
+import { IAudio, ICategory } from '@/types';
+import { AudioCard } from '@/components/features';
 
 function SearchContent() {
   const searchParams = useSearchParams();
-  const { currentAudio, isPlaying, playAudio } = useAudioPlayer();
 
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [query, setQuery] = useState('');
@@ -22,9 +21,8 @@ function SearchContent() {
   useEffect(() => {
     async function loadCategories() {
       try {
-        const res = await fetch(`${API_BASE_URL}/api/public/categories`);
-        const data = await res.json();
-        if (data.success) {
+        const data = await publicService.fetchCategories();
+        if (data.success && data.data) {
           setCategories(data.data);
         }
       } catch (err) {
@@ -45,7 +43,7 @@ function SearchContent() {
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       triggerSearch();
-    }, 200); // short debounce to prevent keypress overload
+    }, 200);
 
     return () => clearTimeout(delayDebounce);
   }, [query, selectedCategory]);
@@ -55,15 +53,8 @@ function SearchContent() {
     setError('');
 
     try {
-      const qQuery = query ? `q=${encodeURIComponent(query)}` : '';
-      const catQuery = selectedCategory ? `category=${encodeURIComponent(selectedCategory)}` : '';
-      const params = [qQuery, catQuery].filter(Boolean).join('&');
-      const url = `${API_BASE_URL}/api/public/audios/search?${params}`;
-
-      const res = await fetch(url);
-      const data = await res.json();
-
-      if (data.success) {
+      const data = await publicService.searchAudios(query, selectedCategory);
+      if (data.success && data.data) {
         setResults(data.data);
       } else {
         setError(data.error || 'Search failed');
@@ -78,11 +69,6 @@ function SearchContent() {
 
   const handleClear = () => {
     setQuery('');
-  };
-
-  const formatDuration = (secs: number) => {
-    const mins = Math.floor(secs / 60);
-    return `${mins} min`;
   };
 
   return (
@@ -143,64 +129,9 @@ function SearchContent() {
           <div className="text-center py-12 text-rose-400 font-semibold">{error}</div>
         ) : results.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
-            {results.map((audio) => {
-              const isCurrent = currentAudio?._id === audio._id;
-              const isPlayingThis = isCurrent && isPlaying;
-
-              return (
-                <div 
-                  key={audio._id}
-                  className="bg-transparent p-1.5 transition-all duration-500 hover:-translate-y-1.5 group relative"
-                >
-                  <Link href={`/audio/${audio.slug}`} className="block">
-                    <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-zinc-950 border border-white/[0.03] transition-all duration-550 group-hover:shadow-2xl group-hover:shadow-rose-500/10 group-hover:border-white/[0.08]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img 
-                        src={getMediaUrl(audio.thumbnailUrl, API_BASE_URL)} 
-                        alt={audio.title}
-                        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-106"
-                        loading="lazy"
-                      />
-
-                      {/* Gradient Overlay for luxury touch */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-zinc-950/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          playAudio(audio, results);
-                        }}
-                        className={`absolute bottom-2.5 right-2.5 h-8.5 w-8.5 rounded-full bg-white/90 hover:bg-rose-500 text-zinc-900 hover:text-white backdrop-blur-sm flex items-center justify-center shadow-xl shadow-black/25 hover:shadow-rose-500/30 hover:scale-105 transition-all duration-300 transform cursor-pointer ${
-                          isCurrent 
-                            ? 'opacity-100 scale-100' 
-                            : 'opacity-0 scale-90 translate-y-1.5 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0'
-                        }`}
-                      >
-                        {isPlayingThis ? (
-                          <Pause className="h-4 w-4 fill-current ml-0" />
-                        ) : (
-                          <Play className="h-4 w-4 fill-current ml-0.5" />
-                        )}
-                      </button>
-
-
-                    </div>
-
-                    <h3 className="font-extrabold text-sm text-zinc-100 tracking-tight group-hover:text-rose-400 transition-colors duration-300 line-clamp-1 mt-1">
-                      {itemTitle(audio.title)}
-                    </h3>
-                    <div className="flex items-center justify-between mt-1 text-[9.5px] tracking-wide text-zinc-500 uppercase font-bold">
-                      <span className="truncate max-w-[85px]">{(audio.category as any)?.name || 'Audiobook'}</span>
-                      <span className="flex items-center gap-0.5 shrink-0 font-mono text-[10px] text-zinc-400 font-medium lowercase">
-                        <Clock className="h-3 w-3 text-rose-500/70" />
-                        {formatDuration(audio.duration)}
-                      </span>
-                    </div>
-                  </Link>
-                </div>
-              );
-            })}
+            {results.map((audio) => (
+              <AudioCard key={audio._id} audio={audio} queueList={results} />
+            ))}
           </div>
         ) : (
           <div className="py-20 text-center text-zinc-500 border border-dashed border-zinc-800 rounded-2xl">
@@ -212,10 +143,6 @@ function SearchContent() {
       </div>
     </div>
   );
-}
-
-function itemTitle(title: string) {
-  return title;
 }
 
 export default function SearchPage() {

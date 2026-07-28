@@ -6,10 +6,11 @@ import {
   Play, Pause, SkipForward, SkipBack, 
   Volume2, VolumeX, Gauge, Music
 } from 'lucide-react';
-import { useAudioPlayer, API_BASE_URL } from '../context/AudioContext';
-import { getMediaUrl, formatDuration } from 'shared';
+import { useAudioPlayer } from '@/hooks';
+import { getMediaUrl, formatDuration } from '@/utils';
+import { API_BASE_URL } from '@/constants/config';
 
-export default function StickyPlayer() {
+export function Player() {
   const {
     currentAudio,
     isPlaying,
@@ -51,7 +52,6 @@ export default function StickyPlayer() {
   };
 
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
-
   const thumbnailUrl = getMediaUrl(currentAudio.thumbnailUrl, API_BASE_URL);
 
   return (
@@ -213,3 +213,5 @@ export default function StickyPlayer() {
     </div>
   );
 }
+
+export default Player;
