@@ -4,7 +4,7 @@ import { ApiResponse, IAudio, IBanner, ICategory } from '@/types';
 export const publicService = {
   async fetchBanners(): Promise<ApiResponse<IBanner[]>> {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/public/banners`);
+      const res = await fetch(`${API_BASE_URL}/api/public/banners`, { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed to fetch banners');
       return await res.json();
     } catch (err) {
@@ -15,7 +15,7 @@ export const publicService = {
 
   async fetchFeaturedAudios(): Promise<ApiResponse<IAudio[]>> {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/public/audios/featured`);
+      const res = await fetch(`${API_BASE_URL}/api/public/audios/featured`, { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed to fetch featured audios');
       return await res.json();
     } catch (err) {
@@ -26,7 +26,7 @@ export const publicService = {
 
   async fetchTrendingAudios(): Promise<ApiResponse<IAudio[]>> {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/public/audios/trending`);
+      const res = await fetch(`${API_BASE_URL}/api/public/audios/trending`, { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed to fetch trending audios');
       return await res.json();
     } catch (err) {
@@ -37,7 +37,7 @@ export const publicService = {
 
   async fetchLatestAudios(): Promise<ApiResponse<IAudio[]>> {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/public/audios/latest`);
+      const res = await fetch(`${API_BASE_URL}/api/public/audios/latest`, { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed to fetch latest audios');
       return await res.json();
     } catch (err) {
@@ -48,7 +48,7 @@ export const publicService = {
 
   async fetchCategories(): Promise<ApiResponse<ICategory[]>> {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/public/categories`);
+      const res = await fetch(`${API_BASE_URL}/api/public/categories`, { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed to fetch categories');
       return await res.json();
     } catch (err) {
@@ -64,7 +64,7 @@ export const publicService = {
       const params = [qQuery, catQuery].filter(Boolean).join('&');
       const url = `${API_BASE_URL}/api/public/audios/search?${params}`;
 
-      const res = await fetch(url);
+      const res = await fetch(url, { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed to search audios');
       return await res.json();
     } catch (err) {
@@ -75,7 +75,7 @@ export const publicService = {
 
   async getAudioBySlug(slug: string): Promise<ApiResponse<IAudio>> {
     try {
-      const res = await fetch(`${API_BASE_URL}/api/public/audios/${slug}`);
+      const res = await fetch(`${API_BASE_URL}/api/public/audios/${slug}`, { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed to get audio by slug');
       return await res.json();
     } catch (err: any) {
