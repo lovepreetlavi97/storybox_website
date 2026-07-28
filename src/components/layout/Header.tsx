@@ -14,16 +14,13 @@ export function Header() {
         
         {/* Left Brand info */}
         <div className="flex items-center gap-8">
-          <Link href="/" className="flex items-center gap-2.5 group font-semibold">
+          <Link href="/" className="flex items-center group font-semibold">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
               src="/storyhublogo.png" 
               alt="StoryHub Logo" 
-              className="h-9 w-auto object-contain rounded-lg shrink-0 group-hover:scale-105 transition-transform" 
+              className="h-12 w-auto object-contain rounded-lg shrink-0 group-hover:scale-105 transition-transform" 
             />
-            <span className="font-extrabold text-lg tracking-tight text-white transition-colors group-hover:text-red-500">
-              Story<span className="text-red-500">Hub</span>
-            </span>
           </Link>
           
           <nav className="hidden md:flex items-center gap-6 text-sm font-semibold text-zinc-400">
