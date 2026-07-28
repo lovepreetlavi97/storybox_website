@@ -357,7 +357,9 @@ export default function Homepage() {
       {/* 4. FEEDS GRID ROWS */}
       <section className="space-y-10">
         <AudioRow title="Featured Audiobooks" data={featured} />
-        <AudioRow title="Trending Now" data={trending} />
+        <div id="trending" className="scroll-mt-24">
+          <AudioRow title="Trending Now" data={trending} />
+        </div>
         <AudioRow title="Latest Releases" data={latest} />
       </section>
 

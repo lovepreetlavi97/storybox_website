@@ -24,7 +24,7 @@ export function Header() {
           </Link>
           
           <nav className="hidden md:flex items-center gap-6 text-sm font-semibold text-zinc-400">
-            <Link href="/" className="text-white hover:text-red-500 transition-colors">Popular</Link>
+            <Link href="/#trending" className="hover:text-red-500 transition-colors">Popular</Link>
             <Link href="/#recently-listened" className="hover:text-red-500 transition-colors">Recently Listened</Link>
             <Link href="/#categories" className="hover:text-red-500 transition-colors">Categories</Link>
           </nav>
