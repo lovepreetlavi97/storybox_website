@@ -16,12 +16,6 @@ export function getMediaUrl(url?: string | null, defaultBaseUrl: string = API_BA
     return url;
   }
   const cleanUrl = url.startsWith('/') ? url : `/${url}`;
-  
-  // If relative upload path, resolve to S3 bucket URL
-  if (cleanUrl.startsWith('/uploads/')) {
-    return `https://xpernex-storage.s3.us-east-1.amazonaws.com${cleanUrl}`;
-  }
-
   const cleanBase = defaultBaseUrl.replace(/\/api\/?$/, '').replace(/\/$/, '');
   return `${cleanBase}${cleanUrl}`;
 }
