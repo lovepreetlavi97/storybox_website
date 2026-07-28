@@ -58,7 +58,7 @@ export function Player() {
     <div className="fixed bottom-0 left-0 right-0 h-24 bg-zinc-900/98 backdrop-blur border-t border-zinc-800 px-4 md:px-8 flex items-center justify-between z-40 select-none shadow-2xl">
       
       {/* LEFT: Thumbnail and Title Details */}
-      <div className="flex items-center gap-3 w-1/3 min-w-0">
+      <div className="flex items-center gap-3 shrink-0 max-w-[160px] sm:max-w-xs min-w-0">
         <Link href={`/audio/${currentAudio.slug}`} className="shrink-0">
           {!imgError && thumbnailUrl ? (
             /* eslint-disable-next-line @next/next/no-img-element */
@@ -66,77 +66,80 @@ export function Player() {
               src={thumbnailUrl} 
               alt={currentAudio.title} 
               onError={() => setImgError(true)}
-              className="h-14 w-14 rounded-lg object-cover bg-zinc-850 shrink-0 border border-zinc-800 shadow-md"
+              className="h-12 w-12 sm:h-14 sm:w-14 rounded-lg object-cover bg-zinc-850 shrink-0 border border-zinc-800 shadow-md"
             />
           ) : (
-            <div className="h-14 w-14 rounded-lg bg-zinc-800 flex items-center justify-center border border-zinc-700 text-rose-500 shrink-0">
-              <Music className="h-6 w-6" />
+            <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-lg bg-zinc-800 flex items-center justify-center border border-zinc-700 text-rose-500 shrink-0">
+              <Music className="h-5 w-5 sm:h-6 sm:w-6" />
             </div>
           )}
         </Link>
         <div className="min-w-0">
           <Link 
             href={`/audio/${currentAudio.slug}`}
-            className="font-semibold text-sm text-white hover:text-rose-500 hover:underline block truncate cursor-pointer"
+            className="font-semibold text-xs sm:text-sm text-white hover:text-rose-500 hover:underline block truncate cursor-pointer"
           >
             {currentAudio.title}
           </Link>
-          <span className="text-xs text-zinc-400 block truncate">
+          <span className="text-[10px] sm:text-xs text-zinc-400 block truncate">
             {currentAudio.language} &bull; {(currentAudio.category as any)?.name || 'Audiobook'}
           </span>
         </div>
       </div>
 
-      {/* CENTER: Playback Controls and Seek Bar */}
-      <div className="flex flex-col items-center w-1/3 max-w-xl">
-        <div className="flex items-center gap-5 mb-2.5">
+      {/* CENTER: Playback Controls and Prominent Seek Bar */}
+      <div className="flex flex-col items-center flex-1 max-w-xl sm:max-w-2xl px-2 sm:px-6">
+        <div className="flex items-center gap-4 sm:gap-6 mb-1.5 sm:mb-2">
           <button 
             onClick={previous}
             disabled={queue.length <= 1 || currentIndex === 0}
-            className="text-zinc-400 hover:text-white transition-colors cursor-pointer disabled:opacity-30 disabled:hover:text-zinc-400"
+            aria-label="Previous Track"
+            className="text-zinc-400 hover:text-white transition-colors cursor-pointer disabled:opacity-30 disabled:hover:text-zinc-400 p-1"
           >
-            <SkipBack className="h-5 w-5 fill-current" />
+            <SkipBack className="h-4.5 w-4.5 sm:h-5 sm:w-5 fill-current" />
           </button>
           
           <button 
             onClick={togglePlay}
-            className="h-10 w-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-105 transition-transform cursor-pointer shadow-md"
+            aria-label={isPlaying ? "Pause" : "Play"}
+            className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer shadow-lg shadow-white/10"
           >
             {isPlaying ? (
-              <Pause className="h-5 w-5 fill-current ml-0" />
+              <Pause className="h-4.5 w-4.5 sm:h-5 sm:w-5 fill-current ml-0" />
             ) : (
-              <Play className="h-5 w-5 fill-current ml-0.5" />
+              <Play className="h-4.5 w-4.5 sm:h-5 sm:w-5 fill-current ml-0.5" />
             )}
           </button>
 
           <button 
             onClick={next}
             disabled={queue.length <= 1 || currentIndex === queue.length - 1}
-            className="text-zinc-400 hover:text-white transition-colors cursor-pointer disabled:opacity-30 disabled:hover:text-zinc-400"
+            aria-label="Next Track"
+            className="text-zinc-400 hover:text-white transition-colors cursor-pointer disabled:opacity-30 disabled:hover:text-zinc-400 p-1"
           >
-            <SkipForward className="h-5 w-5 fill-current" />
+            <SkipForward className="h-4.5 w-4.5 sm:h-5 sm:w-5 fill-current" />
           </button>
         </div>
 
-        {/* Seek Bar */}
-        <div className="w-full flex items-center gap-3">
-          <span className="text-[10px] font-mono text-zinc-500 w-8 text-right shrink-0">
+        {/* Wide & Easy-to-Touch Seek Bar */}
+        <div className="w-full flex items-center gap-2 sm:gap-3">
+          <span className="text-[10px] font-mono text-zinc-400 w-8 text-right shrink-0">
             {formatDuration(currentTime)}
           </span>
-          <div className="flex-1 relative flex items-center group">
+          <div className="flex-1 relative flex items-center py-2 group cursor-pointer">
             <input 
               type="range"
               min={0}
               max={duration || 100}
               value={currentTime}
               onChange={handleSeekChange}
-              className="w-full h-1 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-rose-500 hover:h-1.5 transition-all outline-none"
+              className="w-full h-2.5 sm:h-3 bg-zinc-800 rounded-full appearance-none cursor-pointer accent-rose-500 hover:h-3.5 transition-all outline-none shadow-inner"
               style={{
-                background: `linear-gradient(to right, #ef4444 0%, #ef4444 ${progressPercent}%, #27272a ${progressPercent}%, #27272a 100%)`
+                background: `linear-gradient(to right, #f43f5e 0%, #f43f5e ${progressPercent}%, #27272a ${progressPercent}%, #27272a 100%)`
               }}
             />
           </div>
-          <span className="text-[10px] font-mono text-zinc-500 w-8 shrink-0">
+          <span className="text-[10px] font-mono text-zinc-400 w-8 shrink-0">
             {formatDuration(duration)}
           </span>
         </div>

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { AudioPlayerProvider } from '@/store';
 import { Header, Footer } from '@/components/layout';
@@ -7,6 +7,13 @@ import { Player } from '@/components/features';
 export const metadata: Metadata = {
   title: 'StoryHub - Listen to Premium Audiobooks & Stories',
   description: 'Stream unlimited futuristic audiobooks, biography summaries, and audio stories in English.',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
