@@ -1,6 +1,6 @@
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL
   ? process.env.NEXT_PUBLIC_API_URL.replace(/\/api\/?$/, '')
-  : 'http://localhost:5000';
+  : 'http://3.82.47.4:5000';
 
 export const WEBSITE_URL = process.env.NEXT_PUBLIC_WEBSITE_URL || 'https://storyhub.xpernex.com';
 export const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://consolestoryhub.xpernex.com';
