@@ -21,15 +21,37 @@ export default function Homepage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeBannerIndex, setActiveBannerIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
-  const handleBannerScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const scrollLeft = e.currentTarget.scrollLeft;
-    const width = e.currentTarget.clientWidth;
-    if (width > 0) {
-      const index = Math.round(scrollLeft / width);
-      setActiveBannerIndex(index);
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd || banners.length <= 1) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+    if (isLeftSwipe) {
+      setActiveBannerIndex((prev) => (prev + 1) % banners.length);
+    } else if (isRightSwipe) {
+      setActiveBannerIndex((prev) => (prev - 1 + banners.length) % banners.length);
     }
   };
+
+  useEffect(() => {
+    if (banners.length <= 1) return;
+    const interval = setInterval(() => {
+      setActiveBannerIndex((prev) => (prev + 1) % banners.length);
+    }, 6000);
+    return () => clearInterval(interval);
+  }, [banners.length]);
 
   useEffect(() => {
     async function fetchHomeFeeds() {
@@ -89,67 +111,78 @@ export default function Homepage() {
 
       {/* 1. HERO BANNER SLIDER CONTAINER */}
       {banners.length > 0 && (
-        <section className="relative overflow-hidden rounded-2xl bg-zinc-950 border border-zinc-900">
+        <section className="relative overflow-hidden rounded-2xl bg-zinc-950 border border-zinc-900 aspect-[18/9] sm:aspect-[18/7] min-h-[160px] sm:min-h-[360px]">
+          {/* Viewport */}
           <div 
-            onScroll={handleBannerScroll}
-            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar aspect-[18/9] sm:aspect-[18/7] min-h-[160px] sm:min-h-[360px]"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            className="w-full h-full overflow-hidden relative"
           >
-            {banners.map((banner) => (
-              <div 
-                key={banner._id}
-                className="w-full shrink-0 snap-start relative h-full flex flex-col justify-end pb-12 pt-6 px-6 sm:pb-24 sm:px-12 lg:pb-28 lg:px-20 min-h-[160px] sm:min-h-[360px]"
-              >
-                {/* Background Banner image */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                  src={getMediaUrl(banner.imageUrl, API_BASE_URL)} 
-                  alt={banner.title}
-                  className="absolute inset-0 w-full h-full object-cover object-[60%_45%] scale-[1.20] brightness-[1.18] contrast-[1.12] saturate-[1.05] transition-all duration-700 ease-out"
-                />
-                {/* Left-to-right dark gradient for text readability (30-35% average opacity on right) */}
-                <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/85 via-zinc-950/40 to-zinc-950/15"></div>
-                {/* Bottom-to-top dark gradient for card-blend */}
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/50 via-transparent to-transparent"></div>
-                
-                {/* Banner Content overlay */}
-                <div className="relative max-w-xs sm:max-w-md lg:max-w-lg space-y-4 sm:space-y-6 lg:space-y-7 z-10">
-                  <h1 className="text-sm sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm line-clamp-2 leading-tight">
-                    {banner.title}
-                  </h1>
-                  {banner.description && (
-                    <p className="text-zinc-300 text-[10px] sm:text-sm font-medium line-clamp-2 leading-relaxed hidden sm:block">
-                      {banner.description}
-                    </p>
-                  )}
+            {/* Track */}
+            <div 
+              className="flex transition-transform duration-500 ease-out w-full h-full"
+              style={{ transform: `translateX(-${activeBannerIndex * 100}%)` }}
+            >
+              {banners.map((banner) => (
+                /* Slide */
+                <div 
+                  key={banner._id}
+                  className="w-full min-w-full shrink-0 relative h-full flex flex-col justify-end pb-12 pt-6 px-6 sm:pb-24 sm:px-12 lg:pb-28 lg:px-20 min-h-[160px] sm:min-h-[360px]"
+                >
+                  {/* Background Banner image */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img 
+                    src={getMediaUrl(banner.imageUrl, API_BASE_URL)} 
+                    alt={banner.title}
+                    className="absolute inset-0 w-full h-full object-cover object-[60%_45%] scale-[1.20] brightness-[1.18] contrast-[1.12] saturate-[1.05] transition-all duration-700 ease-out"
+                  />
+                  {/* Left-to-right dark gradient for text readability (30-35% average opacity on right) */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-zinc-950/85 via-zinc-950/40 to-zinc-950/15"></div>
+                  {/* Bottom-to-top dark gradient for card-blend */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/50 via-transparent to-transparent"></div>
                   
-                  {/* Banner CTA link */}
-                  <div className="pt-0.5 sm:pt-2">
-                    <Link 
-                      href={
-                        banner.linkType === 'audio' 
-                          ? `/audio/${banner.linkValue}` 
-                          : banner.linkType === 'category' 
-                          ? `/search?category=${encodeURIComponent(banner.linkValue)}` 
-                          : banner.linkValue
-                      }
-                      className="inline-flex items-center justify-center gap-2.5 bg-rose-500 hover:bg-rose-600 text-white font-extrabold text-xs sm:text-sm h-[40px] sm:h-[50px] px-6 sm:px-9 rounded-full transition-all cursor-pointer shadow-lg shadow-rose-500/35 hover:shadow-[0_0_20px_rgba(244,63,94,0.65)] hover:scale-[1.02] active:scale-98"
-                    >
-                      <Play className="h-3.5 w-3.5 fill-current ml-0.5" />
-                      Listen Now
-                    </Link>
+                  {/* Banner Content overlay */}
+                  <div className="relative max-w-xs sm:max-w-md lg:max-w-lg space-y-4 sm:space-y-6 lg:space-y-7 z-10">
+                    <h1 className="text-sm sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm line-clamp-2 leading-tight">
+                      {banner.title}
+                    </h1>
+                    {banner.description && (
+                      <p className="text-zinc-300 text-[10px] sm:text-sm font-medium line-clamp-2 leading-relaxed hidden sm:block">
+                        {banner.description}
+                      </p>
+                    )}
+                    
+                    {/* Banner CTA link */}
+                    <div className="pt-0.5 sm:pt-2">
+                      <Link 
+                        href={
+                          banner.linkType === 'audio' 
+                            ? `/audio/${banner.linkValue}` 
+                            : banner.linkType === 'category' 
+                            ? `/search?category=${encodeURIComponent(banner.linkValue)}` 
+                            : banner.linkValue
+                        }
+                        className="inline-flex items-center justify-center gap-2.5 bg-rose-500 hover:bg-rose-600 text-white font-extrabold text-xs sm:text-sm h-[40px] sm:h-[50px] px-6 sm:px-9 rounded-full transition-all cursor-pointer shadow-lg shadow-rose-500/35 hover:shadow-[0_0_20px_rgba(244,63,94,0.65)] hover:scale-[1.02] active:scale-98"
+                      >
+                        <Play className="h-3.5 w-3.5 fill-current ml-0.5" />
+                        Listen Now
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
           {/* Dynamic Swiper Dots Indicator */}
           {banners.length > 1 && (
             <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
               {banners.map((_, idx) => (
-                <div 
+                <button 
                   key={idx}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${activeBannerIndex === idx ? 'w-4 bg-rose-500' : 'w-1.5 bg-zinc-600/70'
+                  onClick={() => setActiveBannerIndex(idx)}
+                  className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer focus:outline-none ${activeBannerIndex === idx ? 'w-4 bg-rose-500' : 'w-1.5 bg-zinc-600/70'
                     }`}
                 />
               ))}
