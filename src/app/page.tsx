@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Play, BookOpen, Laugh, Ghost, Heart, Compass, Sparkles, Rocket, Smile, Flame } from 'lucide-react';
+import { Play, BookOpen, Crown, Eye, Heart, Coffee, Fingerprint, Sparkles, Orbit, Feather, Flame } from 'lucide-react';
 import { useAudioPlayer } from '@/hooks';
 import { publicService } from '@/services';
 import { IAudio, IBanner, ICategory } from '@/types';
@@ -14,65 +14,73 @@ const getCategoryStyle = (slug: string, name: string) => {
   const normalized = slug.toLowerCase();
   if (normalized.includes('funny') || normalized.includes('comedy') || normalized.includes('humor')) {
     return {
-      icon: Laugh,
+      icon: Crown,
       color: '#FFC107',
-      subtitle: '500+ laughs',
+      subtitle: 'Comedy & humor',
       iconFilled: true
     };
   }
   if (normalized.includes('horror') || normalized.includes('scary') || normalized.includes('ghost')) {
     return {
-      icon: Ghost,
+      icon: Eye,
       color: '#EF4444',
-      subtitle: '200+ nightmares',
-      iconFilled: true
+      subtitle: 'Dark thrillers',
+      iconFilled: false
     };
   }
   if (normalized.includes('love') || normalized.includes('romance') || normalized.includes('romantic')) {
     return {
       icon: Heart,
       color: '#FF2D55',
-      subtitle: '300+ romances',
+      subtitle: 'Sweet romances',
       iconFilled: true
     };
   }
-  if (normalized.includes('mystery') || normalized.includes('thriller') || normalized.includes('detective')) {
+  if (normalized.includes('mystery') || normalized.includes('suspense') || normalized.includes('thriller') || normalized.includes('detective')) {
     return {
-      icon: Compass,
+      icon: Fingerprint,
       color: '#8B5CF6',
-      subtitle: '180+ mysteries',
-      iconFilled: true
+      subtitle: 'Suspense & mystery',
+      iconFilled: false
+    };
+  }
+  if (normalized.includes('sad') || normalized.includes('emotional') || normalized.includes('melancholy')) {
+    return {
+      icon: Coffee,
+      color: '#3B82F6',
+      subtitle: 'Deep emotions',
+      iconFilled: false
     };
   }
   if (normalized.includes('fantasy') || normalized.includes('magic') || normalized.includes('wizard')) {
     return {
       icon: Sparkles,
       color: '#06B6D4',
-      subtitle: '250+ adventures',
+      subtitle: 'Epic adventures',
       iconFilled: true
     };
   }
   if (normalized.includes('sci-fi') || normalized.includes('scifi') || normalized.includes('science') || normalized.includes('space')) {
     return {
-      icon: Rocket,
+      icon: Orbit,
       color: '#3B82F6',
-      subtitle: '120+ future tales',
-      iconFilled: true
+      subtitle: 'Future horizons',
+      iconFilled: false
     };
   }
   if (normalized.includes('kids') || normalized.includes('child') || normalized.includes('children')) {
     return {
-      icon: Smile,
+      icon: Feather,
       color: '#22C55E',
-      subtitle: '400+ fun stories',
-      iconFilled: true
+      subtitle: 'Gentle stories',
+      iconFilled: false
     };
   }
   if (normalized.includes('motivational') || normalized.includes('motivation') || normalized.includes('inspirational') || normalized.includes('inspire')) {
     return {
       icon: Flame,
       color: '#F97316',
-      subtitle: '150+ inspirations',
+      subtitle: 'Inspiring minds',
       iconFilled: true
     };
   }
@@ -80,7 +88,7 @@ const getCategoryStyle = (slug: string, name: string) => {
   return {
     icon: BookOpen,
     color: '#F43F5E',
-    subtitle: 'Explore stories',
+    subtitle: 'Listen now',
     iconFilled: false
   };
 };
@@ -274,28 +282,12 @@ export default function Homepage() {
         </section>
       )}
 
-      {/* 2. CATEGORIES SELECTOR TABS - Premium Glassmorphic Cards */}
+      {/* 2. CATEGORIES SELECTOR TABS - Premium Luxury Glass Cards */}
       {categories.length > 0 && (
-        <section id="categories" className="space-y-6 scroll-mt-20">
-          {/* Inline styles for animated gradient border */}
-          <style dangerouslySetInnerHTML={{__html: `
-            @keyframes category-gradient-xy {
-              0%, 100% {
-                background-position: 0% 50%;
-              }
-              50% {
-                background-position: 100% 50%;
-              }
-            }
-            .animate-category-gradient {
-              animation: category-gradient-xy 3s ease infinite;
-              background-size: 200% auto;
-            }
-          `}} />
-
+        <section id="categories" className="space-y-4 scroll-mt-20">
           <h2 className="text-xl font-extrabold tracking-tight text-white sm:text-2xl px-4 sm:px-0">Browse Categories</h2>
           
-          <div className="flex gap-[14px] overflow-x-auto pb-6 pt-2 no-scrollbar snap-x scroll-smooth px-4 sm:px-0">
+          <div className="flex gap-[14px] overflow-x-auto pb-4 pt-2 no-scrollbar snap-x scroll-smooth px-4 sm:px-0">
             {categories.map((cat) => {
               const style = getCategoryStyle(cat.slug, cat.name);
               const Icon = style.icon;
@@ -306,45 +298,33 @@ export default function Homepage() {
                   key={cat._id}
                   href={`/search?category=${encodeURIComponent(cat.slug)}`}
                   onClick={() => setActiveCategory(cat.slug)}
-                  className={`relative ${
-                    isActive ? 'scale-[1.03] shadow-[0_0_25px_rgba(244,63,94,0.35)] z-10' : 'hover:scale-[1.03] active:scale-[0.98]'
-                  } transition-all duration-300 ease-out shrink-0 snap-start select-none`}
+                  className={`relative shrink-0 snap-start select-none transition-all duration-300 ${
+                    isActive ? 'scale-[1.03]' : 'active:scale-[0.98]'
+                  }`}
                 >
-                  {/* Outer border wrapper (1px border simulation) */}
-                  <div className={`p-[1px] rounded-[20px] sm:rounded-[24px] ${
-                    isActive 
-                      ? 'bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 animate-category-gradient' 
-                      : 'bg-white/[0.08] hover:bg-white/[0.15]'
-                  } transition-all duration-300`}>
+                  <div 
+                    className={`w-[130px] sm:w-[170px] h-[68px] sm:h-[80px] rounded-[16px] flex flex-col justify-between p-3.5 border transition-all duration-300 ${
+                      isActive 
+                        ? 'bg-rose-500/[0.08] border-rose-500/80 shadow-[0_0_15px_rgba(244,63,94,0.2),inset_0_1px_0_rgba(255,255,255,0.15)]' 
+                        : 'bg-gradient-to-b from-white/[0.07] to-white/[0.02] hover:from-white/[0.12] hover:to-white/[0.04] border-white/[0.08] hover:border-white/[0.15] shadow-[0_12px_35px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.08)]'
+                    }`}
+                  >
+                    {/* Top: Icon */}
+                    <div className="flex items-center">
+                      <Icon 
+                        className="h-4.5 w-4.5 sm:h-5 sm:w-5 transition-all duration-300" 
+                        style={{ 
+                          color: style.color,
+                          fill: (isActive && style.iconFilled) ? style.color : 'transparent' 
+                        }} 
+                      />
+                    </div>
                     
-                    {/* Inner card content */}
-                    <div 
-                      className={`w-[130px] sm:w-[180px] h-[72px] sm:h-[88px] rounded-[19px] sm:rounded-[23px] flex flex-col justify-between p-3.5 ${
-                        isActive 
-                          ? 'bg-zinc-950/90' 
-                          : 'bg-white/[0.04]'
-                      } transition-all duration-300`}
-                      style={{
-                        boxShadow: isActive ? '0 12px 35px rgba(0,0,0,0.5)' : '0 12px 35px rgba(0,0,0,0.35)'
-                      }}
-                    >
-                      {/* Top: Icon */}
-                      <div className="flex items-center">
-                        <Icon 
-                          className={`h-4.5 w-4.5 sm:h-6 sm:w-6 transition-all duration-300`} 
-                          style={{ 
-                            color: style.color,
-                            fill: (isActive && style.iconFilled) ? style.color : 'transparent' 
-                          }} 
-                        />
-                      </div>
-                      
-                      {/* Center/Bottom Info */}
-                      <div className="space-y-0.5 sm:space-y-1">
-                        <h3 className="text-xs sm:text-[18px] font-semibold tracking-tight text-white leading-tight truncate">
-                          {cat.name}
-                        </h3>
-                      </div>
+                    {/* Category Name */}
+                    <div className="flex flex-col">
+                      <span className="text-xs sm:text-[14px] font-semibold tracking-tight text-white/90 truncate leading-none">
+                        {cat.name}
+                      </span>
                     </div>
                   </div>
                 </Link>
