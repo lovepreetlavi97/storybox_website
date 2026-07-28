@@ -109,9 +109,9 @@ export default function Homepage() {
                 {/* Dark overlay gradient for strong readability */}
                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/75 to-zinc-950/30"></div>
                 
-                {/* Banner Content overlay */}
-                <div className="relative max-w-lg space-y-2 sm:space-y-3 z-10">
-                  <h1 className="text-base sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm line-clamp-2 leading-tight">
+                {/* Banner Content overlay - Floating Premium Glassmorphic Card */}
+                <div className="relative max-w-xs sm:max-w-md lg:max-w-lg space-y-2.5 sm:space-y-3.5 z-10 p-4 sm:p-6 lg:p-8 rounded-2xl bg-zinc-950/45 backdrop-blur-md border border-white/5 shadow-2xl ml-1 sm:ml-4 lg:ml-8 mb-1 sm:mb-4">
+                  <h1 className="text-sm sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm line-clamp-2 leading-tight">
                     {banner.title}
                   </h1>
                   {banner.description && (
