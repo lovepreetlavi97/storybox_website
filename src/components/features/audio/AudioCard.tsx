@@ -12,9 +12,10 @@ interface AudioCardProps {
   audio: IAudio;
   queueList?: IAudio[];
   progress?: number;
+  className?: string;
 }
 
-export function AudioCard({ audio, queueList = [], progress }: AudioCardProps) {
+export function AudioCard({ audio, queueList = [], progress, className = '' }: AudioCardProps) {
   const { currentAudio, isPlaying, playAudio, toggleWishlist, isInWishlist } = useAudioPlayer();
 
   const isCurrent = currentAudio?._id === audio._id;
@@ -38,8 +39,10 @@ export function AudioCard({ audio, queueList = [], progress }: AudioCardProps) {
     return `${mins} min`;
   };
 
+  const widthClass = className.includes('w-') ? '' : 'w-full';
+
   return (
-    <div className="w-40 sm:w-44 shrink-0 snap-start bg-transparent p-1.5 transition-all duration-500 hover:-translate-y-1.5 group relative">
+    <div className={`${widthClass} sm:w-44 shrink-0 snap-start bg-transparent p-1.5 transition-all duration-500 hover:-translate-y-1.5 group relative ${className}`}>
       <Link href={`/audio/${audio.slug}`} className="block">
         {/* Thumbnail Container */}
         <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-zinc-950 border border-white/[0.03] transition-all duration-550 group-hover:shadow-2xl group-hover:shadow-rose-500/10 group-hover:border-white/[0.08]">

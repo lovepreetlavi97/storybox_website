@@ -27,7 +27,7 @@ export function AudioRow({ title, data }: AudioRowProps) {
       {/* Scrolling Cards Row */}
       <div className="flex gap-5 overflow-x-auto pb-4 pt-1 no-scrollbar snap-x scroll-smooth">
         {data.map((audio) => (
-          <AudioCard key={audio._id} audio={audio} queueList={data} />
+          <AudioCard key={audio._id} audio={audio} queueList={data} className="w-36" />
         ))}
       </div>
     </div>

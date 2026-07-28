@@ -188,6 +188,7 @@ export default function Homepage() {
                 audio={item.audio}
                 queueList={recentlyListened.map(r => r.audio)}
                 progress={item.progress}
+                className="w-36"
               />
             ))}
           </div>
