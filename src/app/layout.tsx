@@ -6,13 +6,13 @@ import { AudioPlayerProvider } from '../context/AudioContext';
 import StickyPlayer from '../components/Player';
 
 export const metadata: Metadata = {
-  title: 'StoryBox - Listen to Premium Audiobooks & Stories',
+  title: 'StoryHub - Listen to Premium Audiobooks & Stories',
   description: 'Stream unlimited futuristic audiobooks, biography summaries, and audio stories in English.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const genres = ['Love', 'Personal Finance', 'Historical', 'Information', 'Career', 'Self Help', 'Religion'];
-  const generals = ['Help & Support', 'Contact us', 'Studio for Creators', 'Download StoryBox'];
+  const generals = ['Help & Support', 'Contact us', 'Studio for Creators', 'Download StoryHub'];
   const companies = ['About us', 'Careers', 'Team', 'Collaborate'];
 
   return (
@@ -26,16 +26,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {/* Left Brand info */}
               <div className="flex items-center gap-8">
                 <Link href="/" className="flex items-center gap-2.5 group font-semibold">
-                  <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-900 border border-zinc-800 shadow-md shadow-cyan-500/10 group-hover:scale-105 transition-all overflow-hidden shrink-0">
-                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 via-fuchsia-500 to-rose-500 opacity-25 group-hover:opacity-45 transition-opacity"></div>
-                    <svg className="h-5.5 w-5.5 text-cyan-400 group-hover:text-cyan-300 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                      <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-                      <line x1="12" y1="22.08" x2="12" y2="12" />
-                    </svg>
-                  </div>
+                  <img 
+                    src="/storyhublogo.png" 
+                    alt="StoryHub Logo" 
+                    className="h-9 w-auto object-contain rounded-lg shrink-0 group-hover:scale-105 transition-transform" 
+                  />
                   <span className="font-extrabold text-lg tracking-tight text-white transition-colors group-hover:text-cyan-400">
-                    Story<span className="text-cyan-400">Box</span>
+                    Story<span className="text-cyan-400">Hub</span>
                   </span>
                 </Link>
                 
@@ -132,7 +129,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <span className="hover:text-white cursor-pointer transition-colors">Report Abuse (DMCA)</span>
                 </div>
                 <p className="text-center md:text-right">
-                  &copy; {new Date().getFullYear()} StoryBox. Built for ultra-fast, lightweight streaming.
+                  &copy; {new Date().getFullYear()} StoryHub. Built for ultra-fast, lightweight streaming.
                 </p>
               </div>
 
