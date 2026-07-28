@@ -74,7 +74,7 @@ export default function Homepage() {
       <div className="max-w-xl mx-auto my-20 p-8 rounded-2xl bg-zinc-900 border border-zinc-800 text-center">
         <h2 className="text-xl font-bold text-white mb-2">Platform Offline</h2>
         <p className="text-zinc-400 mb-6 text-sm leading-relaxed">{error}</p>
-        <button 
+        <button
           onClick={() => window.location.reload()}
           className="bg-rose-500 hover:bg-rose-600 px-6 py-2.5 rounded-full font-bold text-white transition-all cursor-pointer text-sm"
         >
@@ -86,32 +86,32 @@ export default function Homepage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-12">
-      
+
       {/* 1. HERO BANNER SLIDER CONTAINER */}
       {banners.length > 0 && (
         <section className="relative overflow-hidden rounded-2xl bg-zinc-950 border border-zinc-900">
-          <div 
+          <div
             onScroll={handleBannerScroll}
             className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar aspect-[21/9] lg:aspect-[24/9] min-h-[130px] sm:min-h-[300px]"
           >
             {banners.map((banner) => (
-              <div 
+              <div
                 key={banner._id}
                 className="w-full shrink-0 snap-start relative h-full flex flex-col justify-end pb-8 pt-5 px-5 sm:p-8 lg:p-12 min-h-[130px] sm:min-h-[300px]"
               >
                 {/* Background Banner image */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                  src={getMediaUrl(banner.imageUrl, API_BASE_URL)} 
+                <img
+                  src={getMediaUrl(banner.imageUrl, API_BASE_URL)}
                   alt={banner.title}
                   className="absolute inset-0 w-full h-full object-contain sm:object-cover object-center"
                 />
                 {/* Dark overlay gradient for strong readability */}
                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/75 to-zinc-950/30"></div>
-                
-                {/* Banner Content overlay - Floating Premium Glassmorphic Card */}
-                <div className="relative max-w-xs sm:max-w-md lg:max-w-lg space-y-2.5 sm:space-y-3.5 z-10 p-4 sm:p-6 lg:p-8 rounded-2xl bg-zinc-950/45 backdrop-blur-md border border-white/5 shadow-2xl ml-1 sm:ml-4 lg:ml-8 mb-1 sm:mb-4">
-                  <h1 className="text-sm sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm line-clamp-2 leading-tight">
+
+                {/* Banner Content overlay */}
+                <div className="relative max-w-lg space-y-2 sm:space-y-3 z-10">
+                  <h1 className="text-base sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm line-clamp-2 leading-tight">
                     {banner.title}
                   </h1>
                   {banner.description && (
@@ -119,16 +119,16 @@ export default function Homepage() {
                       {banner.description}
                     </p>
                   )}
-                  
+
                   {/* Banner CTA link */}
                   <div className="pt-0.5 sm:pt-2">
-                    <Link 
+                    <Link
                       href={
-                        banner.linkType === 'audio' 
-                          ? `/audio/${banner.linkValue}` 
-                          : banner.linkType === 'category' 
-                          ? `/search?category=${encodeURIComponent(banner.linkValue)}` 
-                          : banner.linkValue
+                        banner.linkType === 'audio'
+                          ? `/audio/${banner.linkValue}`
+                          : banner.linkType === 'category'
+                            ? `/search?category=${encodeURIComponent(banner.linkValue)}`
+                            : banner.linkValue
                       }
                       className="inline-flex items-center gap-1.5 bg-rose-500 hover:bg-rose-600 text-white font-bold text-[10px] sm:text-xs px-3.5 py-1.5 sm:px-5 sm:py-2.5 rounded-full transition-all cursor-pointer hover:shadow-lg hover:shadow-rose-500/20"
                     >
@@ -145,11 +145,10 @@ export default function Homepage() {
           {banners.length > 1 && (
             <div className="absolute bottom-3.5 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
               {banners.map((_, idx) => (
-                <div 
+                <div
                   key={idx}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${
-                    activeBannerIndex === idx ? 'w-4 bg-rose-500' : 'w-1.5 bg-zinc-600/70'
-                  }`}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${activeBannerIndex === idx ? 'w-4 bg-rose-500' : 'w-1.5 bg-zinc-600/70'
+                    }`}
                 />
               ))}
             </div>
@@ -184,7 +183,7 @@ export default function Homepage() {
           </div>
           <div className="flex gap-5 overflow-x-auto pb-4 pt-1 no-scrollbar snap-x scroll-smooth">
             {recentlyListened.map((item) => (
-              <AudioCard 
+              <AudioCard
                 key={item.audio._id}
                 audio={item.audio}
                 queueList={recentlyListened.map(r => r.audio)}
