@@ -2,13 +2,88 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Play, BookOpen } from 'lucide-react';
+import { Play, BookOpen, Laugh, Ghost, Heart, Compass, Sparkles, Rocket, Smile, Flame } from 'lucide-react';
 import { useAudioPlayer } from '@/hooks';
 import { publicService } from '@/services';
 import { IAudio, IBanner, ICategory } from '@/types';
 import { getMediaUrl } from '@/utils';
 import { API_BASE_URL } from '@/constants/config';
 import { AudioRow, AudioCard } from '@/components/features';
+
+const getCategoryStyle = (slug: string, name: string) => {
+  const normalized = slug.toLowerCase();
+  if (normalized.includes('funny') || normalized.includes('comedy') || normalized.includes('humor')) {
+    return {
+      icon: Laugh,
+      color: '#FFC107',
+      subtitle: '500+ laughs',
+      iconFilled: true
+    };
+  }
+  if (normalized.includes('horror') || normalized.includes('scary') || normalized.includes('ghost')) {
+    return {
+      icon: Ghost,
+      color: '#EF4444',
+      subtitle: '200+ nightmares',
+      iconFilled: true
+    };
+  }
+  if (normalized.includes('love') || normalized.includes('romance') || normalized.includes('romantic')) {
+    return {
+      icon: Heart,
+      color: '#FF2D55',
+      subtitle: '300+ romances',
+      iconFilled: true
+    };
+  }
+  if (normalized.includes('mystery') || normalized.includes('thriller') || normalized.includes('detective')) {
+    return {
+      icon: Compass,
+      color: '#8B5CF6',
+      subtitle: '180+ mysteries',
+      iconFilled: true
+    };
+  }
+  if (normalized.includes('fantasy') || normalized.includes('magic') || normalized.includes('wizard')) {
+    return {
+      icon: Sparkles,
+      color: '#06B6D4',
+      subtitle: '250+ adventures',
+      iconFilled: true
+    };
+  }
+  if (normalized.includes('sci-fi') || normalized.includes('scifi') || normalized.includes('science') || normalized.includes('space')) {
+    return {
+      icon: Rocket,
+      color: '#3B82F6',
+      subtitle: '120+ future tales',
+      iconFilled: true
+    };
+  }
+  if (normalized.includes('kids') || normalized.includes('child') || normalized.includes('children')) {
+    return {
+      icon: Smile,
+      color: '#22C55E',
+      subtitle: '400+ fun stories',
+      iconFilled: true
+    };
+  }
+  if (normalized.includes('motivational') || normalized.includes('motivation') || normalized.includes('inspirational') || normalized.includes('inspire')) {
+    return {
+      icon: Flame,
+      color: '#F97316',
+      subtitle: '150+ inspirations',
+      iconFilled: true
+    };
+  }
+  // Default fallback
+  return {
+    icon: BookOpen,
+    color: '#F43F5E',
+    subtitle: 'Explore stories',
+    iconFilled: false
+  };
+};
 
 export default function Homepage() {
   const { recentlyListened } = useAudioPlayer();
@@ -21,8 +96,16 @@ export default function Homepage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeBannerIndex, setActiveBannerIndex] = useState(0);
+  const [activeCategory, setActiveCategory] = useState('');
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      setActiveCategory(params.get('category') || '');
+    }
+  }, []);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchEnd(null);
@@ -191,21 +274,85 @@ export default function Homepage() {
         </section>
       )}
 
-      {/* 2. CATEGORIES SELECTOR TABS */}
+      {/* 2. CATEGORIES SELECTOR TABS - Premium Glassmorphic Cards */}
       {categories.length > 0 && (
-        <section id="categories" className="space-y-4 scroll-mt-20">
-          <h2 className="text-xl font-extrabold tracking-tight text-white sm:text-2xl">Browse Categories</h2>
-          <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar scroll-smooth">
-            {categories.map((cat) => (
-              <Link
-                key={cat._id}
-                href={`/search?category=${encodeURIComponent(cat.slug)}`}
-                className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-zinc-900 border border-zinc-800/80 hover:bg-zinc-850 hover:border-zinc-700/80 transition-all font-semibold text-sm text-zinc-200 shrink-0 cursor-pointer"
-              >
-                <BookOpen className="h-4.5 w-4.5 text-rose-500" />
-                {cat.name}
-              </Link>
-            ))}
+        <section id="categories" className="space-y-6 scroll-mt-20">
+          {/* Inline styles for animated gradient border */}
+          <style dangerouslySetInnerHTML={{__html: `
+            @keyframes category-gradient-xy {
+              0%, 100% {
+                background-position: 0% 50%;
+              }
+              50% {
+                background-position: 100% 50%;
+              }
+            }
+            .animate-category-gradient {
+              animation: category-gradient-xy 3s ease infinite;
+              background-size: 200% auto;
+            }
+          `}} />
+
+          <h2 className="text-xl font-extrabold tracking-tight text-white sm:text-2xl px-4 sm:px-0">Browse Categories</h2>
+          
+          <div className="flex gap-[14px] overflow-x-auto pb-6 pt-2 no-scrollbar snap-x scroll-smooth px-4 sm:px-0">
+            {categories.map((cat) => {
+              const style = getCategoryStyle(cat.slug, cat.name);
+              const Icon = style.icon;
+              const isActive = activeCategory === cat.slug;
+              
+              return (
+                <Link
+                  key={cat._id}
+                  href={`/search?category=${encodeURIComponent(cat.slug)}`}
+                  onClick={() => setActiveCategory(cat.slug)}
+                  className={`relative ${
+                    isActive ? 'scale-[1.03] shadow-[0_0_25px_rgba(244,63,94,0.35)] z-10' : 'hover:scale-[1.03] active:scale-[0.98]'
+                  } transition-all duration-300 ease-out shrink-0 snap-start select-none`}
+                >
+                  {/* Outer border wrapper (1px border simulation) */}
+                  <div className={`p-[1px] rounded-[20px] sm:rounded-[24px] ${
+                    isActive 
+                      ? 'bg-gradient-to-r from-rose-500 via-pink-500 to-purple-600 animate-category-gradient' 
+                      : 'bg-white/[0.08] hover:bg-white/[0.15]'
+                  } transition-all duration-300`}>
+                    
+                    {/* Inner card content */}
+                    <div 
+                      className={`w-[130px] sm:w-[180px] h-[72px] sm:h-[88px] rounded-[19px] sm:rounded-[23px] flex flex-col justify-between p-3.5 ${
+                        isActive 
+                          ? 'bg-zinc-950/90' 
+                          : 'bg-white/[0.04]'
+                      } transition-all duration-300`}
+                      style={{
+                        boxShadow: isActive ? '0 12px 35px rgba(0,0,0,0.5)' : '0 12px 35px rgba(0,0,0,0.35)'
+                      }}
+                    >
+                      {/* Top: Icon */}
+                      <div className="flex items-center">
+                        <Icon 
+                          className={`h-4.5 w-4.5 sm:h-6 sm:w-6 transition-all duration-300`} 
+                          style={{ 
+                            color: style.color,
+                            fill: (isActive && style.iconFilled) ? style.color : 'transparent' 
+                          }} 
+                        />
+                      </div>
+                      
+                      {/* Center/Bottom Info */}
+                      <div className="space-y-0.5 sm:space-y-1">
+                        <h3 className="text-xs sm:text-[18px] font-semibold tracking-tight text-white leading-tight truncate">
+                          {cat.name}
+                        </h3>
+                        <p className="text-[9px] sm:text-[12px] font-medium text-zinc-400 opacity-65 leading-none">
+                          {style.subtitle}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </section>
       )}
