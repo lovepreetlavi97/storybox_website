@@ -3,8 +3,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { Search, Heart } from 'lucide-react';
+import { useAudioPlayer } from '@/hooks';
 
 export function Header() {
+  const { wishlist } = useAudioPlayer();
+
   return (
     <header className="sticky top-0 z-30 w-full bg-zinc-950/80 backdrop-blur border-b border-zinc-900/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -35,10 +38,15 @@ export function Header() {
           {/* Wishlist Heart Icon */}
           <Link 
             href="/wishlist" 
-            className="p-2 text-zinc-400 hover:text-white rounded-full hover:bg-zinc-900 transition-all"
+            className="p-2 text-zinc-400 hover:text-white rounded-full hover:bg-zinc-900 transition-all relative"
             title="Wishlist"
           >
             <Heart className="h-5 w-5" />
+            {wishlist.length > 0 && (
+              <span className="absolute top-0.5 right-0.5 bg-rose-500 text-white font-black text-[8px] h-3.5 w-3.5 rounded-full flex items-center justify-center border border-zinc-950 shadow-md">
+                {wishlist.length}
+              </span>
+            )}
           </Link>
           
           {/* Search Bar Icon */}
