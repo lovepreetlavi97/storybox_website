@@ -92,12 +92,12 @@ export default function Homepage() {
         <section className="relative overflow-hidden rounded-2xl bg-zinc-950 border border-zinc-900">
           <div 
             onScroll={handleBannerScroll}
-            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar aspect-[2/1] sm:aspect-[21/9] lg:aspect-[24/9] min-h-[160px] sm:min-h-[300px]"
+            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar aspect-[21/9] lg:aspect-[24/9] min-h-[130px] sm:min-h-[300px]"
           >
             {banners.map((banner) => (
               <div 
                 key={banner._id}
-                className="w-full shrink-0 snap-start relative h-full flex flex-col justify-end pb-8 pt-5 px-5 sm:p-8 lg:p-12 min-h-[160px] sm:min-h-[300px]"
+                className="w-full shrink-0 snap-start relative h-full flex flex-col justify-end pb-8 pt-5 px-5 sm:p-8 lg:p-12 min-h-[130px] sm:min-h-[300px]"
               >
                 {/* Background Banner image */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -115,7 +115,7 @@ export default function Homepage() {
                     {banner.title}
                   </h1>
                   {banner.description && (
-                    <p className="text-zinc-300 text-[10px] sm:text-sm font-medium line-clamp-2 leading-relaxed">
+                    <p className="text-zinc-300 text-[10px] sm:text-sm font-medium line-clamp-2 leading-relaxed hidden sm:block">
                       {banner.description}
                     </p>
                   )}
