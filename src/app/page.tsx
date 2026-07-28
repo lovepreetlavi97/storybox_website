@@ -80,11 +80,11 @@ export default function Homepage() {
       {/* 1. HERO BANNER SLIDER CONTAINER */}
       {banners.length > 0 && (
         <section className="relative overflow-hidden rounded-2xl bg-zinc-950 border border-zinc-900">
-          <div className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar aspect-[21/9] sm:aspect-[24/9]">
+          <div className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar aspect-[16/10] sm:aspect-[21/9] lg:aspect-[24/9] min-h-[250px] sm:min-h-[300px]">
             {banners.map((banner) => (
               <div 
                 key={banner._id}
-                className="w-full shrink-0 snap-start relative h-full flex flex-col justify-end p-6 sm:p-12"
+                className="w-full shrink-0 snap-start relative h-full flex flex-col justify-end p-5 sm:p-8 lg:p-12 min-h-[250px] sm:min-h-[300px]"
               >
                 {/* Background Banner image */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -93,12 +93,12 @@ export default function Homepage() {
                   alt={banner.title}
                   className="absolute inset-0 w-full h-full object-cover"
                 />
-                {/* Dark overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent"></div>
+                {/* Dark overlay gradient for strong readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/75 to-zinc-950/30"></div>
                 
                 {/* Banner Content overlay */}
-                <div className="relative max-w-md space-y-3 z-10">
-                  <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm">
+                <div className="relative max-w-lg space-y-2 sm:space-y-3 z-10">
+                  <h1 className="text-lg sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm line-clamp-2 leading-tight">
                     {banner.title}
                   </h1>
                   {banner.description && (
@@ -108,7 +108,7 @@ export default function Homepage() {
                   )}
                   
                   {/* Banner CTA link */}
-                  <div className="pt-2">
+                  <div className="pt-1 sm:pt-2">
                     <Link 
                       href={
                         banner.linkType === 'audio' 
@@ -117,7 +117,7 @@ export default function Homepage() {
                           ? `/search?category=${encodeURIComponent(banner.linkValue)}` 
                           : banner.linkValue
                       }
-                      className="inline-flex items-center gap-1.5 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs px-5 py-2.5 rounded-full transition-all cursor-pointer hover:shadow-lg hover:shadow-rose-500/20"
+                      className="inline-flex items-center gap-1.5 bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs px-4 py-2 sm:px-5 sm:py-2.5 rounded-full transition-all cursor-pointer hover:shadow-lg hover:shadow-rose-500/20"
                     >
                       <Play className="h-3.5 w-3.5 fill-current ml-0.5" />
                       Listen Now

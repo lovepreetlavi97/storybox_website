@@ -45,21 +45,22 @@ export function AudioCard({ audio, queueList = [], progress }: AudioCardProps) {
           />
 
           {/* Gradient Overlay for luxury touch */}
-          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-zinc-950/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-zinc-950/20 to-transparent opacity-60 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-500" />
 
-          {/* Hover Play Button */}
+          {/* Always Visible Play/Pause Button on Every Card */}
           <button
             onClick={handleCardPlay}
-            className={`absolute bottom-3 right-3 h-10 w-10 rounded-full bg-white/90 hover:bg-rose-500 text-zinc-900 hover:text-white backdrop-blur-sm flex items-center justify-center shadow-xl shadow-black/25 hover:shadow-rose-500/30 hover:scale-105 transition-all duration-300 transform cursor-pointer ${
-              isCurrent 
-                ? 'opacity-100 scale-100' 
-                : 'opacity-0 scale-90 translate-y-2 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-y-0'
+            aria-label={isPlayingThis ? "Pause" : "Play"}
+            className={`absolute bottom-2.5 right-2.5 sm:bottom-3 sm:right-3 h-9 w-9 sm:h-10 sm:w-10 rounded-full backdrop-blur-md flex items-center justify-center shadow-xl shadow-black/40 hover:scale-105 active:scale-95 transition-all duration-300 transform cursor-pointer z-10 ${
+              isPlayingThis 
+                ? 'bg-rose-500 text-white shadow-rose-500/40 ring-2 ring-rose-400/50 opacity-100 scale-100' 
+                : 'bg-zinc-900/90 text-white hover:bg-rose-500 border border-white/10 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 group-hover:scale-100'
             }`}
           >
             {isPlayingThis ? (
-              <Pause className="h-4.5 w-4.5 fill-current ml-0" />
+              <Pause className="h-4 w-4 sm:h-4.5 sm:w-4.5 fill-current" />
             ) : (
-              <Play className="h-4.5 w-4.5 fill-current ml-0.5" />
+              <Play className="h-4 w-4 sm:h-4.5 sm:w-4.5 fill-current ml-0.5" />
             )}
           </button>
 
