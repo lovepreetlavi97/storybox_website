@@ -74,7 +74,40 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
     const savedRecently = localStorage.getItem('recently_listened');
     if (savedRecently) {
       try {
-        setRecentlyListened(JSON.parse(savedRecently));
+        const parsed = JSON.parse(savedRecently);
+        setRecentlyListened(parsed);
+        
+        // Background validation to clean up deleted audio tracks
+        (async () => {
+          if (!Array.isArray(parsed) || parsed.length === 0) return;
+          try {
+            const validated = await Promise.all(
+              parsed.map(async (item: any) => {
+                if (!item || !item.audio || !item.audio.slug) return null;
+                try {
+                  const res = await fetch(`${API_BASE_URL}/api/public/audios/${item.audio.slug}`, { cache: 'no-store' });
+                  if (res.ok) {
+                    const data = await res.json();
+                    if (data.success && data.data) {
+                      return item;
+                    }
+                  }
+                } catch (e) {
+                  // Network error or 404
+                }
+                return null;
+              })
+            );
+            
+            const cleanList = validated.filter(Boolean) as RecentlyListenedItem[];
+            if (cleanList.length !== parsed.length) {
+              setRecentlyListened(cleanList);
+              localStorage.setItem('recently_listened', JSON.stringify(cleanList));
+            }
+          } catch (err) {
+            console.error('Recently listened validation error:', err);
+          }
+        })();
       } catch (e) {
         console.error('Failed to parse recently listened from localStorage:', e);
       }
