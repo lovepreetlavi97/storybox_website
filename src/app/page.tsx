@@ -128,7 +128,7 @@ export default function Homepage() {
                 /* Slide */
                 <div 
                   key={banner._id}
-                  className="w-full min-w-full shrink-0 relative h-full flex flex-col justify-end pb-12 pt-6 px-6 sm:pb-24 sm:px-12 lg:pb-28 lg:px-20 min-h-[160px] sm:min-h-[360px]"
+                  className="w-full min-w-full shrink-0 relative h-full flex flex-col justify-end pb-12 pt-6 px-6 sm:pb-24 sm:px-12 lg:pb-28 lg:px-20 min-h-[160px] sm:min-h-[360px] overflow-hidden"
                 >
                   {/* Background Banner image */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
