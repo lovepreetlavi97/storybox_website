@@ -111,7 +111,7 @@ export default function Homepage() {
 
                 {/* Banner Content overlay */}
                 <div className="relative max-w-lg space-y-2 sm:space-y-3 z-10">
-                  <h1 className="text-base sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm line-clamp-2 leading-tight">
+                  <h1 className="text-xs sm:text-2xl lg:text-3xl font-extrabold tracking-tight text-white drop-shadow-sm line-clamp-2 leading-tight">
                     {banner.title}
                   </h1>
                   {banner.description && (
