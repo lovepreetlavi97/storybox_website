@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Search as SearchIcon, VolumeX, Play, Pause, X, Clock, FolderKanban } from 'lucide-react';
 import { useAudioPlayer, API_BASE_URL } from '../../context/AudioContext';
-import { IAudio, ICategory } from 'shared';
+import { IAudio, ICategory, getMediaUrl, formatDuration } from 'shared';
 
 function SearchContent() {
   const searchParams = useSearchParams();
@@ -156,7 +156,7 @@ function SearchContent() {
                     <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-zinc-950 border border-white/[0.03] transition-all duration-550 group-hover:shadow-2xl group-hover:shadow-rose-500/10 group-hover:border-white/[0.08]">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img 
-                        src={audio.thumbnailUrl.startsWith('http') ? audio.thumbnailUrl : `${API_BASE_URL}${audio.thumbnailUrl}`} 
+                        src={getMediaUrl(audio.thumbnailUrl, API_BASE_URL)} 
                         alt={audio.title}
                         className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-106"
                         loading="lazy"

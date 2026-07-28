@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Play, Pause, ChevronRight, BookOpen, Clock, Music } from 'lucide-react';
 import { useAudioPlayer, API_BASE_URL } from '../context/AudioContext';
-import { IAudio, IBanner, ICategory } from 'shared';
+import { IAudio, IBanner, ICategory, getMediaUrl, formatDuration } from 'shared';
 
 export default function Homepage() {
   const { currentAudio, isPlaying, playAudio, recentlyListened } = useAudioPlayer();
@@ -110,7 +110,7 @@ export default function Homepage() {
                   <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-zinc-950 border border-white/[0.03] transition-all duration-550 group-hover:shadow-2xl group-hover:shadow-rose-500/10 group-hover:border-white/[0.08]">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img 
-                      src={audio.thumbnailUrl.startsWith('http') ? audio.thumbnailUrl : `${API_BASE_URL}${audio.thumbnailUrl}`} 
+                      src={getMediaUrl(audio.thumbnailUrl, API_BASE_URL)} 
                       alt={audio.title}
                       className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-106"
                       loading="lazy"
@@ -173,7 +173,7 @@ export default function Homepage() {
                 {/* Background Banner image */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img 
-                  src={banner.imageUrl.startsWith('http') ? banner.imageUrl : `${API_BASE_URL}${banner.imageUrl}`} 
+                  src={getMediaUrl(banner.imageUrl, API_BASE_URL)} 
                   alt={banner.title}
                   className="absolute inset-0 w-full h-full object-cover"
                 />
@@ -253,7 +253,7 @@ export default function Homepage() {
                     <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-zinc-950 border border-white/[0.03] transition-all duration-550 group-hover:shadow-2xl group-hover:shadow-rose-500/10 group-hover:border-white/[0.08]">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img 
-                        src={item.audio.thumbnailUrl.startsWith('http') ? item.audio.thumbnailUrl : `${API_BASE_URL}${item.audio.thumbnailUrl}`} 
+                        src={getMediaUrl(item.audio.thumbnailUrl, API_BASE_URL)} 
                         alt={item.audio.title}
                         className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-106"
                         loading="lazy"

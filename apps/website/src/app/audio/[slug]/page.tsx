@@ -7,7 +7,7 @@ import {
   ChevronRight, Calendar, Volume2, ArrowLeft 
 } from 'lucide-react';
 import { useAudioPlayer, API_BASE_URL } from '../../../context/AudioContext';
-import { IAudio } from 'shared';
+import { IAudio, getMediaUrl, formatDuration } from 'shared';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -119,7 +119,7 @@ export default function AudioDetailsPage({ params }: PageProps) {
           <div className="relative aspect-[3/4] w-full max-w-[280px] rounded-2xl overflow-hidden bg-zinc-950 shadow-2xl border border-zinc-800">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
-              src={audio.thumbnailUrl.startsWith('http') ? audio.thumbnailUrl : `${API_BASE_URL}${audio.thumbnailUrl}`} 
+              src={getMediaUrl(audio.thumbnailUrl, API_BASE_URL)} 
               alt={audio.title}
               className="w-full h-full object-cover"
             />
@@ -202,7 +202,7 @@ export default function AudioDetailsPage({ params }: PageProps) {
                     <div className="relative aspect-[3/4] rounded-xl overflow-hidden bg-zinc-950 shadow mb-3">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img 
-                        src={item.thumbnailUrl.startsWith('http') ? item.thumbnailUrl : `${API_BASE_URL}${item.thumbnailUrl}`} 
+                        src={getMediaUrl(item.thumbnailUrl, API_BASE_URL)} 
                         alt={item.title}
                         className="w-full h-full object-cover"
                         loading="lazy"

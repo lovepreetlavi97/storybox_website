@@ -1,9 +1,11 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { IAudio } from 'shared';
+import { IAudio, getMediaUrl } from 'shared';
 
-export const API_BASE_URL = 'http://localhost:5000';
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL 
+  ? process.env.NEXT_PUBLIC_API_URL.replace(/\/api\/?$/, '') 
+  : 'http://localhost:5000';
 
 export interface RecentlyListenedItem {
   audio: IAudio;
@@ -86,12 +88,19 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
     };
 
     const onLoadedMetadata = () => {
-      setDuration(audio.duration);
+      if (audio.duration && !isNaN(audio.duration)) {
+        setDuration(audio.duration);
+        setCurrentAudio((prev) => {
+          if (prev && (!prev.duration || prev.duration <= 0)) {
+            return { ...prev, duration: Math.round(audio.duration) };
+          }
+          return prev;
+        });
+      }
     };
 
     const onEnded = () => {
       setIsPlaying(false);
-      // Wait for state updates to trigger naturally or play next
       handleAudioEnded();
     };
 
@@ -170,9 +179,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
   const playAudio = (audio: IAudio, currentQueue: IAudio[] = []) => {
     if (!audioRef.current) return;
 
-    const fullUrl = audio.audioUrl.startsWith('http') 
-      ? audio.audioUrl 
-      : `${API_BASE_URL}${audio.audioUrl}`;
+    const fullUrl = getMediaUrl(audio.audioUrl, API_BASE_URL);
 
     // If it's the same audio track, just resume
     if (currentAudio?._id === audio._id) {

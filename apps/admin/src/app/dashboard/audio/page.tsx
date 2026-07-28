@@ -5,8 +5,8 @@ import {
   Plus, Edit2, Trash2, Search, X, 
   Upload, FileAudio, Check, AlertCircle, ChevronLeft, ChevronRight 
 } from 'lucide-react';
-import { apiRequest } from '../../../utils/api';
-import { ApiResponse, IAudio, ICategory, PaginatedResponse } from 'shared';
+import { apiRequest, SERVER_BASE_URL } from '../../../utils/api';
+import { ApiResponse, IAudio, ICategory, PaginatedResponse, getMediaUrl } from 'shared';
 
 export default function AudioPage() {
   const [audios, setAudios] = useState<IAudio[]>([]);
@@ -97,6 +97,9 @@ export default function AudioPage() {
     if (!file) return;
 
     setThumbnailFile(file);
+    // Instant local preview
+    const localPreviewUrl = URL.createObjectURL(file);
+    setThumbnailUrl(localPreviewUrl);
     setThumbnailLoading(true);
     setError('');
 
@@ -327,7 +330,7 @@ export default function AudioPage() {
                         <td className="px-6 py-4 font-semibold text-white flex items-center gap-3">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img 
-                            src={audio.thumbnailUrl.startsWith('http') ? audio.thumbnailUrl : `http://localhost:5000${audio.thumbnailUrl}`} 
+                            src={getMediaUrl(audio.thumbnailUrl, SERVER_BASE_URL)} 
                             alt={audio.title} 
                             className="h-12 w-12 rounded-lg object-cover bg-zinc-800 border border-zinc-800"
                           />
@@ -467,7 +470,7 @@ export default function AudioPage() {
                       <div className="relative group rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950 h-44 flex items-center justify-center">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img 
-                          src={thumbnailUrl.startsWith('http') ? thumbnailUrl : `http://localhost:5000${thumbnailUrl}`} 
+                          src={getMediaUrl(thumbnailUrl, SERVER_BASE_URL)} 
                           alt="Cover Thumbnail" 
                           className="h-full w-full object-cover"
                         />

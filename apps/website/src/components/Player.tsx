@@ -4,9 +4,10 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { 
   Play, Pause, SkipForward, SkipBack, 
-  Volume2, VolumeX, Gauge, Shuffle, Repeat 
+  Volume2, VolumeX, Gauge, Music
 } from 'lucide-react';
 import { useAudioPlayer, API_BASE_URL } from '../context/AudioContext';
+import { getMediaUrl, formatDuration } from 'shared';
 
 export default function StickyPlayer() {
   const {
@@ -30,6 +31,7 @@ export default function StickyPlayer() {
 
   const [showSpeedMenu, setShowSpeedMenu] = useState(false);
   const [prevVolume, setPrevVolume] = useState(0.8);
+  const [imgError, setImgError] = useState(false);
 
   if (!currentAudio) return null;
 
@@ -48,27 +50,29 @@ export default function StickyPlayer() {
     seek(parseFloat(e.target.value));
   };
 
-  const formatTime = (secs: number) => {
-    if (isNaN(secs)) return '0:00';
-    const mins = Math.floor(secs / 60);
-    const remainingSecs = Math.floor(secs % 60);
-    return `${mins}:${remainingSecs.toString().padStart(2, '0')}`;
-  };
-
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
+
+  const thumbnailUrl = getMediaUrl(currentAudio.thumbnailUrl, API_BASE_URL);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 h-24 bg-zinc-900/98 backdrop-blur border-t border-zinc-800 px-4 md:px-8 flex items-center justify-between z-40 select-none shadow-2xl">
       
       {/* LEFT: Thumbnail and Title Details */}
       <div className="flex items-center gap-3 w-1/3 min-w-0">
-        <Link href={`/audio/${currentAudio.slug}`}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img 
-            src={`${API_BASE_URL}${currentAudio.thumbnailUrl}`} 
-            alt={currentAudio.title} 
-            className="h-14 w-14 rounded-lg object-cover bg-zinc-850 shrink-0 border border-zinc-850"
-          />
+        <Link href={`/audio/${currentAudio.slug}`} className="shrink-0">
+          {!imgError && thumbnailUrl ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img 
+              src={thumbnailUrl} 
+              alt={currentAudio.title} 
+              onError={() => setImgError(true)}
+              className="h-14 w-14 rounded-lg object-cover bg-zinc-850 shrink-0 border border-zinc-800 shadow-md"
+            />
+          ) : (
+            <div className="h-14 w-14 rounded-lg bg-zinc-800 flex items-center justify-center border border-zinc-700 text-rose-500 shrink-0">
+              <Music className="h-6 w-6" />
+            </div>
+          )}
         </Link>
         <div className="min-w-0">
           <Link 
@@ -117,7 +121,7 @@ export default function StickyPlayer() {
         {/* Seek Bar */}
         <div className="w-full flex items-center gap-3">
           <span className="text-[10px] font-mono text-zinc-500 w-8 text-right shrink-0">
-            {formatTime(currentTime)}
+            {formatDuration(currentTime)}
           </span>
           <div className="flex-1 relative flex items-center group">
             <input 
@@ -133,7 +137,7 @@ export default function StickyPlayer() {
             />
           </div>
           <span className="text-[10px] font-mono text-zinc-500 w-8 shrink-0">
-            {formatTime(duration)}
+            {formatDuration(duration)}
           </span>
         </div>
       </div>

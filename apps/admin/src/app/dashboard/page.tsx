@@ -12,8 +12,8 @@ import {
   Calendar,
   Volume2
 } from 'lucide-react';
-import { apiRequest } from '../../utils/api';
-import { ApiResponse, IAudio } from 'shared';
+import { apiRequest, SERVER_BASE_URL } from '../../utils/api';
+import { ApiResponse, IAudio, getMediaUrl } from 'shared';
 
 interface DashboardStats {
   totalAudios: number;
@@ -169,7 +169,7 @@ export default function DashboardOverview() {
                       {audio.thumbnailUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img 
-                          src={audio.thumbnailUrl.startsWith('http') ? audio.thumbnailUrl : `http://localhost:5000${audio.thumbnailUrl}`} 
+                          src={getMediaUrl(audio.thumbnailUrl, SERVER_BASE_URL)} 
                           alt={audio.title} 
                           className="h-10 w-10 rounded-lg object-cover bg-zinc-800 border border-zinc-800"
                         />

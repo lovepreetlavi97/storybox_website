@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Plus, Edit2, Trash2, X, Upload, Link2, Eye, Image as ImageIcon } from 'lucide-react';
-import { apiRequest } from '../../../utils/api';
-import { ApiResponse, IBanner } from 'shared';
+import { apiRequest, SERVER_BASE_URL } from '../../../utils/api';
+import { ApiResponse, IBanner, getMediaUrl } from 'shared';
 
 export default function BannersPage() {
   const [banners, setBanners] = useState<IBanner[]>([]);
@@ -53,6 +53,8 @@ export default function BannersPage() {
     if (!file) return;
 
     setImageFile(file);
+    // Instant local preview
+    setImageUrl(URL.createObjectURL(file));
     setImageLoading(true);
     setError('');
 
@@ -196,7 +198,7 @@ export default function BannersPage() {
                 <div className="relative aspect-[21/9] bg-zinc-950 overflow-hidden border-b border-zinc-800">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={banner.imageUrl.startsWith('http') ? banner.imageUrl : `http://localhost:5000${banner.imageUrl}`}
+                    src={getMediaUrl(banner.imageUrl, SERVER_BASE_URL)}
                     alt={banner.title}
                     className="w-full h-full object-cover group-hover:scale-[1.01] transition-transform duration-350"
                   />
@@ -295,7 +297,7 @@ export default function BannersPage() {
                   <div className="relative group rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950 aspect-[21/9] flex items-center justify-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img 
-                      src={imageUrl.startsWith('http') ? imageUrl : `http://localhost:5000${imageUrl}`} 
+                      src={getMediaUrl(imageUrl, SERVER_BASE_URL)} 
                       alt="Banner Preview" 
                       className="h-full w-full object-cover"
                     />
