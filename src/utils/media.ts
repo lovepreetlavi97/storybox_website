@@ -18,7 +18,9 @@ export function getMediaUrl(url?: string | null, defaultBaseUrl: string = API_BA
   const cleanUrl = url.startsWith('/') ? url : `/${url}`;
   let cleanBase = defaultBaseUrl.replace(/\/api\/?$/, '').replace(/\/$/, '');
   if (!cleanBase || cleanBase.startsWith('/')) {
-    cleanBase = 'http://3.82.47.4:5000';
+    cleanBase = typeof window !== 'undefined' && window.location.protocol === 'https:'
+      ? ''
+      : 'http://3.82.47.4:5000';
   }
   return `${cleanBase}${cleanUrl}`;
 }
