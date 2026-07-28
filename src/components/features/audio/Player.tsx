@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { 
   Play, Pause, SkipForward, SkipBack, 
-  Volume2, VolumeX, Gauge, Music, X
+  Volume2, VolumeX, Gauge, Music, X, AlignLeft
 } from 'lucide-react';
 import { useAudioPlayer } from '@/hooks';
 import { getMediaUrl, formatDuration } from '@/utils';
@@ -32,6 +32,7 @@ export function Player() {
   } = useAudioPlayer();
 
   const [showSpeedMenu, setShowSpeedMenu] = useState(false);
+  const [showLyricsModal, setShowLyricsModal] = useState(false);
   const [prevVolume, setPrevVolume] = useState(0.8);
   const [imgError, setImgError] = useState(false);
 
@@ -190,6 +191,22 @@ export function Player() {
           )}
         </div>
 
+        {/* Lyrics button (only show if currentAudio has lyrics!) */}
+        {currentAudio.lyrics && (
+          <button
+            onClick={() => setShowLyricsModal(true)}
+            className={`flex items-center gap-1 px-1.5 sm:px-2.5 py-1.5 rounded-lg border transition-all cursor-pointer text-[10px] sm:text-xs font-semibold ${
+              showLyricsModal
+                ? 'bg-rose-500 border-rose-500 text-white'
+                : 'bg-zinc-800 hover:bg-zinc-750 border-zinc-800 text-zinc-300 hover:text-white'
+            }`}
+            title="Show Lyrics"
+          >
+            <AlignLeft className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+            <span>Lyrics</span>
+          </button>
+        )}
+
         {/* Volume controls (Hidden on mobile) */}
         <div className="hidden sm:flex items-center gap-2 w-24 md:w-28">
           <button 
@@ -221,6 +238,47 @@ export function Player() {
           <X className="h-4.5 w-4.5" />
         </button>
       </div>
+
+      {/* LUXURY LYRICS MODAL OVERLAY */}
+      {showLyricsModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-md transition-all duration-300">
+          <div className="relative w-full max-w-xl bg-zinc-900/90 border border-zinc-800 rounded-3xl p-6 md:p-8 shadow-2xl flex flex-col max-h-[75vh] overflow-hidden">
+            {/* Close button */}
+            <button
+              onClick={() => setShowLyricsModal(false)}
+              className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-white rounded-full bg-zinc-800 hover:bg-zinc-750 transition-colors cursor-pointer"
+            >
+              <X className="h-4.5 w-4.5" />
+            </button>
+
+            {/* Header info */}
+            <div className="mb-6 flex gap-4 items-center border-b border-zinc-800/80 pb-4">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img 
+                src={getMediaUrl(currentAudio.thumbnailUrl, API_BASE_URL)} 
+                alt={currentAudio.title} 
+                className="h-14 w-14 rounded-xl object-cover border border-zinc-800 shadow-md"
+              />
+              <div className="text-left">
+                <h3 className="text-lg font-extrabold text-white tracking-tight leading-snug">{currentAudio.title}</h3>
+                <p className="text-xs text-zinc-400">{(currentAudio.category as any)?.name || 'Audiobook'}</p>
+              </div>
+            </div>
+
+            {/* Scrollable lyrics area */}
+            <div className="flex-1 overflow-y-auto no-scrollbar py-2 px-1 space-y-6 select-text scroll-smooth">
+              <div className="text-center font-medium text-base sm:text-lg leading-loose text-zinc-200 whitespace-pre-wrap tracking-wide font-sans md:px-6">
+                {currentAudio.lyrics}
+              </div>
+            </div>
+
+            {/* Footer brand touch */}
+            <div className="mt-6 pt-4 border-t border-zinc-800/60 text-center text-[10px] text-zinc-500 uppercase tracking-widest font-bold">
+              Lyrics & Transcript Experience
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

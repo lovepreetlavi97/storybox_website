@@ -11,6 +11,7 @@ export interface IAudio {
   featured: boolean;
   trending: boolean;
   published: boolean;
+  lyrics?: string;
   createdAt: string;
   updatedAt: string;
 }

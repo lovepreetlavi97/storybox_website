@@ -180,6 +180,18 @@ export default function AudioDetailsPage({ params }: PageProps) {
         </div>
       </div>
 
+      {/* LYRICS / TRANSCRIPT CARD */}
+      {audio.lyrics && (
+        <section className="space-y-4">
+          <h2 className="text-xl font-extrabold tracking-tight text-white sm:text-2xl">
+            Lyrics & Transcript
+          </h2>
+          <div className="bg-zinc-900/30 p-6 md:p-8 rounded-3xl border border-zinc-900/60 leading-loose text-zinc-350 whitespace-pre-wrap tracking-wide font-sans text-sm sm:text-base md:px-12 max-h-[450px] overflow-y-auto no-scrollbar scroll-smooth">
+            {audio.lyrics}
+          </div>
+        </section>
+      )}
+
       {/* RELATED AUDIO ROW */}
       {related.length > 0 && (
         <section className="space-y-6">
