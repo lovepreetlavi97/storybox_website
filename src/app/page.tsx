@@ -92,19 +92,19 @@ export default function Homepage() {
         <section className="relative overflow-hidden rounded-2xl bg-zinc-950 border border-zinc-900">
           <div 
             onScroll={handleBannerScroll}
-            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar aspect-[16/9] sm:aspect-[21/9] lg:aspect-[24/9] min-h-[200px] sm:min-h-[300px]"
+            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar aspect-[2/1] sm:aspect-[21/9] lg:aspect-[24/9] min-h-[160px] sm:min-h-[300px]"
           >
             {banners.map((banner) => (
               <div 
                 key={banner._id}
-                className="w-full shrink-0 snap-start relative h-full flex flex-col justify-end pb-8 pt-5 px-5 sm:p-8 lg:p-12 min-h-[200px] sm:min-h-[300px]"
+                className="w-full shrink-0 snap-start relative h-full flex flex-col justify-end pb-8 pt-5 px-5 sm:p-8 lg:p-12 min-h-[160px] sm:min-h-[300px]"
               >
                 {/* Background Banner image */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img 
                   src={getMediaUrl(banner.imageUrl, API_BASE_URL)} 
                   alt={banner.title}
-                  className="absolute inset-0 w-full h-full object-cover object-center"
+                  className="absolute inset-0 w-full h-full object-contain sm:object-cover object-center"
                 />
                 {/* Dark overlay gradient for strong readability */}
                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/75 to-zinc-950/30"></div>
