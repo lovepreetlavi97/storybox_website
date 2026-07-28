@@ -16,6 +16,9 @@ export function getMediaUrl(url?: string | null, defaultBaseUrl: string = API_BA
     return url;
   }
   const cleanUrl = url.startsWith('/') ? url : `/${url}`;
-  const cleanBase = defaultBaseUrl.replace(/\/api\/?$/, '').replace(/\/$/, '');
+  let cleanBase = defaultBaseUrl.replace(/\/api\/?$/, '').replace(/\/$/, '');
+  if (!cleanBase || cleanBase.startsWith('/')) {
+    cleanBase = 'http://3.82.47.4:5000';
+  }
   return `${cleanBase}${cleanUrl}`;
 }
