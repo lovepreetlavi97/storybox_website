@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
-  Play, Pause, Clock, Globe, BookOpen, 
+  Play, Pause, Clock, BookOpen, 
   ArrowLeft 
 } from 'lucide-react';
 import { useAudioPlayer } from '@/hooks';
@@ -138,10 +138,6 @@ export default function AudioDetailsPage({ params }: PageProps) {
               <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-zinc-900 text-rose-400 border border-zinc-800">
                 <BookOpen className="h-3.5 w-3.5" />
                 {(audio.category as any)?.name || 'Audiobook'}
-              </span>
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-zinc-900 text-zinc-300 border border-zinc-800">
-                <Globe className="h-3.5 w-3.5 text-zinc-500" />
-                {audio.language}
               </span>
               <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-mono font-bold bg-zinc-900 text-zinc-300 border border-zinc-800">
                 <Clock className="h-3.5 w-3.5 text-zinc-500" />

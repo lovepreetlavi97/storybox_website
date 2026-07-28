@@ -82,7 +82,7 @@ export function Player() {
             {currentAudio.title}
           </Link>
           <span className="text-[10px] sm:text-xs text-zinc-400 block truncate">
-            {currentAudio.language} &bull; {(currentAudio.category as any)?.name || 'Audiobook'}
+            {(currentAudio.category as any)?.name || 'Audiobook'}
           </span>
         </div>
       </div>

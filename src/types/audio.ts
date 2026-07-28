@@ -7,7 +7,7 @@ export interface IAudio {
   audioUrl: string;
   duration: number; // in seconds
   category: string;
-  language: string;
+  language?: string;
   featured: boolean;
   trending: boolean;
   published: boolean;
