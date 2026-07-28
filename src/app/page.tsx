@@ -344,9 +344,6 @@ export default function Homepage() {
                         <h3 className="text-xs sm:text-[18px] font-semibold tracking-tight text-white leading-tight truncate">
                           {cat.name}
                         </h3>
-                        <p className="text-[9px] sm:text-[12px] font-medium text-zinc-400 opacity-65 leading-none">
-                          {style.subtitle}
-                        </p>
                       </div>
                     </div>
                   </div>
