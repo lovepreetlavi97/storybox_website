@@ -68,8 +68,8 @@ export function Footer() {
             <span className="hover:text-white cursor-pointer transition-colors">Cookie Policy</span>
             <span className="hover:text-white cursor-pointer transition-colors">Report Abuse (DMCA)</span>
           </div>
-          <p className="text-center md:text-right">
-            &copy; {new Date().getFullYear()} StoryHub. Built for ultra-fast, lightweight streaming.
+          <p className="text-center md:text-right font-medium text-zinc-400">
+            &copy; {new Date().getFullYear()} StoryHub. All rights reserved. Stories that stay.
           </p>
         </div>
 
