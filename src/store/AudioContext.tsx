@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 import { IAudio } from '@/types';
 import { getMediaUrl } from '@/utils/media';
 import { API_BASE_URL } from '@/constants/config';
+import { SubscribeModal } from '@/components/common';
 
 export interface RecentlyListenedItem {
   audio: IAudio;
@@ -21,6 +22,10 @@ export interface AudioPlayerContextType {
   autoNext: boolean;
   queue: IAudio[];
   currentIndex: number;
+  isSubscribed: boolean;
+  isSubscribeModalOpen: boolean;
+  openSubscribeModal: (title?: string, message?: string) => void;
+  closeSubscribeModal: () => void;
   playAudio: (audio: IAudio, currentQueue?: IAudio[], startTime?: number) => void;
   pause: () => void;
   resume: () => void;
@@ -53,6 +58,39 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
 
   const [recentlyListened, setRecentlyListened] = useState<RecentlyListenedItem[]>([]);
   const [wishlist, setWishlist] = useState<IAudio[]>([]);
+
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState("Unlock Full Audiobooks with StoryHub VIP");
+  const [modalMessage, setModalMessage] = useState("You've enjoyed your free demo preview! Subscribe for just 15 KSH/Daily to get unlimited access to all audiobooks, full series, and ad-free listening.");
+
+  const isSubscribedRef = useRef(false);
+
+  const openSubscribeModal = (title?: string, message?: string) => {
+    if (title) setModalTitle(title);
+    if (message) setModalMessage(message);
+    setIsSubscribeModalOpen(true);
+  };
+
+  const closeSubscribeModal = () => {
+    setIsSubscribeModalOpen(false);
+  };
+
+  useEffect(() => {
+    const checkSub = () => {
+      if (typeof window !== 'undefined') {
+        const sub = localStorage.getItem('storyhub_subscribed') === 'true';
+        const params = new URLSearchParams(window.location.search);
+        const bypass = params.get('preview') === 'true' || params.get('admin') === 'true';
+        const active = sub || bypass;
+        setIsSubscribed(active);
+        isSubscribedRef.current = active;
+      }
+    };
+    checkSub();
+    window.addEventListener('focus', checkSub);
+    return () => window.removeEventListener('focus', checkSub);
+  }, []);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -163,6 +201,16 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
     // Audio Event Listeners
     const onTimeUpdate = () => {
       setCurrentTime(audio.currentTime);
+      if (!isSubscribedRef.current && audio.currentTime >= 60) {
+        audio.pause();
+        setIsPlaying(false);
+        audio.currentTime = 0;
+        setCurrentTime(0);
+        openSubscribeModal(
+          "60-Second Free Preview Ended",
+          "You've reached the 60-second free demo limit for this audiobook. Subscribe to StoryHub VIP (15 KSH/Daily) for full, unlimited audiobook streaming!"
+        );
+      }
     };
 
     const onLoadedMetadata = () => {
@@ -412,6 +460,10 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
         autoNext,
         queue,
         currentIndex,
+        isSubscribed,
+        isSubscribeModalOpen,
+        openSubscribeModal,
+        closeSubscribeModal,
         playAudio,
         pause,
         resume,
@@ -430,6 +482,12 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
       }}
     >
       {children}
+      <SubscribeModal
+        isOpen={isSubscribeModalOpen}
+        onClose={closeSubscribeModal}
+        title={modalTitle}
+        message={modalMessage}
+      />
     </AudioPlayerContext.Provider>
   );
 }

@@ -2,8 +2,14 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export function Footer() {
+  const pathname = usePathname();
+
+  if (pathname === '/subscribe' || pathname === '/redirect') {
+    return null;
+  }
   return (
     <footer className="bg-zinc-950 border-t border-zinc-900/60 mt-16 py-8 text-xs">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

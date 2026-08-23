@@ -3,7 +3,7 @@
 Production URLs:
 - 🌐 **Public Website**: [https://storyhub.xpernex.com](https://storyhub.xpernex.com)
 - ⚙️ **Admin Console**: [https://consolestoryhub.xpernex.com](https://consolestoryhub.xpernex.com)
-- 🔌 **API Base**: `http://3.82.47.4:5000/api`
+- 🔌 **API Base**: `https://storyhub.xpernex.com/api`
 
 ---
 

@@ -1,1 +1,2 @@
-export {};
+export { SubscribeModal } from './SubscribeModal';
+

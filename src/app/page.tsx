@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Play, BookOpen, Crown, Eye, Heart, Coffee, Fingerprint, Sparkles, Orbit, Feather, Flame } from 'lucide-react';
 import { useAudioPlayer } from '@/hooks';
 import { publicService } from '@/services';
@@ -94,6 +95,7 @@ const getCategoryStyle = (slug: string, name: string) => {
 };
 
 export default function Homepage() {
+  const router = useRouter();
   const { recentlyListened } = useAudioPlayer();
 
   const [banners, setBanners] = useState<IBanner[]>([]);
@@ -110,10 +112,20 @@ export default function Homepage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      const isSub = localStorage.getItem('storyhub_subscribed') === 'true';
       const params = new URLSearchParams(window.location.search);
+      const bypass = params.get('preview') === 'true' || params.get('admin') === 'true' || params.get('demo') === 'true';
+      
+      // If user is not subscribed, redirect to Subscribe page first (carrying query params)
+      if (!isSub && !bypass) {
+        const query = window.location.search;
+        router.replace(`/subscribe${query}`);
+        return;
+      }
+
       setActiveCategory(params.get('category') || '');
     }
-  }, []);
+  }, [router]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchEnd(null);
@@ -244,8 +256,8 @@ export default function Homepage() {
                       </p>
                     )}
                     
-                    {/* Banner CTA link */}
-                    <div className="pt-0.5 sm:pt-2">
+                    {/* Banner CTA links */}
+                    <div className="pt-0.5 sm:pt-2 flex items-center gap-3">
                       <Link 
                         href={
                           banner.linkType === 'audio' 
@@ -258,6 +270,14 @@ export default function Homepage() {
                       >
                         <Play className="h-3.5 w-3.5 fill-current ml-0.5" />
                         Listen Now
+                      </Link>
+
+                      <Link
+                        href="/demo"
+                        className="inline-flex items-center justify-center gap-2 bg-zinc-900/80 hover:bg-zinc-800 text-amber-400 border border-amber-500/40 font-bold text-xs sm:text-sm h-[40px] sm:h-[50px] px-5 sm:px-7 rounded-full transition-all cursor-pointer hover:border-amber-400 shadow-md backdrop-blur"
+                      >
+                        <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+                        Try Free Demo
                       </Link>
                     </div>
                   </div>

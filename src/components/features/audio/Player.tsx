@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { 
   Play, Pause, SkipForward, SkipBack, 
   Volume2, VolumeX, Gauge, Music, X, AlignLeft
@@ -11,6 +12,7 @@ import { getMediaUrl, formatDuration } from '@/utils';
 import { API_BASE_URL } from '@/constants/config';
 
 export function Player() {
+  const pathname = usePathname();
   const {
     currentAudio,
     isPlaying,
@@ -36,6 +38,7 @@ export function Player() {
   const [prevVolume, setPrevVolume] = useState(0.8);
   const [imgError, setImgError] = useState(false);
 
+  if (pathname === '/subscribe' || pathname === '/redirect') return null;
   if (!currentAudio) return null;
 
   const speeds = [0.5, 1, 1.25, 1.5, 2];

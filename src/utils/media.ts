@@ -23,9 +23,11 @@ export function getMediaUrl(url?: string | null, defaultBaseUrl: string = API_BA
 
   let cleanBase = defaultBaseUrl.replace(/\/api\/?$/, '').replace(/\/$/, '');
   if (!cleanBase || cleanBase.startsWith('/')) {
-    cleanBase = typeof window !== 'undefined' && window.location.protocol === 'https:'
-      ? ''
-      : 'http://3.82.47.4:5000';
+    cleanBase = typeof window !== 'undefined'
+      ? ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+          ? (process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL.replace(/\/api\/?$/, '') : 'http://localhost:5000')
+          : (window.location.protocol === 'https:' ? '' : 'https://storyhub.xpernex.com'))
+      : (process.env.NEXT_PUBLIC_API_URL ? process.env.NEXT_PUBLIC_API_URL.replace(/\/api\/?$/, '') : 'https://storyhub.xpernex.com');
   }
   return `${cleanBase}${cleanUrl}`;
 }

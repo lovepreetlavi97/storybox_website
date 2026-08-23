@@ -19,7 +19,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="h-full scroll-smooth antialiased dark">
-      <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100 pb-28">
+      <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100">
         <AudioPlayerProvider>
           {/* HEADER */}
           <Header />
