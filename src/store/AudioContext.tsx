@@ -79,10 +79,13 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
   useEffect(() => {
     const checkSub = () => {
       if (typeof window !== 'undefined') {
+        /* [SUBSCRIPTION CHECK COMMENTED FOR TESTING]
         const sub = localStorage.getItem('storyhub_subscribed') === 'true';
         const params = new URLSearchParams(window.location.search);
         const bypass = params.get('preview') === 'true' || params.get('admin') === 'true';
         const active = sub || bypass;
+        */
+        const active = true; // Bypassed for testing without subscription
         setIsSubscribed(active);
         isSubscribedRef.current = active;
       }
@@ -201,6 +204,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
     // Audio Event Listeners
     const onTimeUpdate = () => {
       setCurrentTime(audio.currentTime);
+      /* [SUBSCRIPTION CHECK COMMENTED FOR TESTING]
       if (!isSubscribedRef.current && audio.currentTime >= 60) {
         audio.pause();
         setIsPlaying(false);
@@ -211,6 +215,7 @@ export function AudioPlayerProvider({ children }: { children: React.ReactNode })
           "You've reached the 60-second free demo limit for this audiobook. Subscribe to StoryHub VIP (15 KSH/Daily) for full, unlimited audiobook streaming!"
         );
       }
+      */
     };
 
     const onLoadedMetadata = () => {
