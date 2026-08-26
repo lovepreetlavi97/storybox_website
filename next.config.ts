@@ -2,21 +2,27 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   async rewrites() {
-    const target = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-    if (target.startsWith('http')) {
-      const cleanTarget = target.replace(/\/api\/?$/, '');
-      return [
-        {
-          source: '/api/:path*',
-          destination: `${cleanTarget}/api/:path*`,
-        },
-        {
-          source: '/uploads/:path*',
-          destination: `${cleanTarget}/uploads/:path*`,
-        },
-      ];
+    let backendOrigin = process.env.BACKEND_PROXY_URL || process.env.BACKEND_INTERNAL_URL;
+
+    if (!backendOrigin) {
+      const publicApi = process.env.NEXT_PUBLIC_API_URL || '';
+      if (publicApi && !publicApi.includes('storyhub.xpernex.com') && !publicApi.includes('consolestoryhub.xpernex.com')) {
+        backendOrigin = publicApi.replace(/\/api\/?$/, '');
+      } else {
+        backendOrigin = 'http://127.0.0.1:5000';
+      }
     }
-    return [];
+
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${backendOrigin}/api/:path*`,
+      },
+      {
+        source: '/uploads/:path*',
+        destination: `${backendOrigin}/uploads/:path*`,
+      },
+    ];
   },
 };
 
