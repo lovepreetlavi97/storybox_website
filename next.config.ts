@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
       if (publicApi && !publicApi.includes('storyhub.xpernex.com') && !publicApi.includes('consolestoryhub.xpernex.com')) {
         backendOrigin = publicApi.replace(/\/api\/?$/, '');
       } else {
-        backendOrigin = 'http://127.0.0.1:5000';
+        backendOrigin = 'http://44.205.31.67:5000';
       }
     }
 
