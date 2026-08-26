@@ -1,12 +1,11 @@
 const getRawApiUrl = (): string => {
   if (typeof window !== 'undefined') {
-    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const hostname = window.location.hostname;
+    const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
     if (isLocal) {
       return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
     }
-    if (window.location.protocol === 'https:') {
-      return '/api';
-    }
+    return '/api';
   }
   return process.env.NEXT_PUBLIC_API_URL || 'https://storyhub.xpernex.com/api';
 };
@@ -19,13 +18,21 @@ export const API_BASE_URL = rawUrl.startsWith('/')
   : rawUrl.replace(/\/api\/?$/, '').replace(/\/$/, '');
 
 export const WEBSITE_URL = process.env.NEXT_PUBLIC_WEBSITE_URL ||
-  (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? 'http://localhost:3000'
+  (typeof window !== 'undefined'
+    ? (window.location.hostname === '44.205.31.67'
+        ? `http://${window.location.hostname}:3000`
+        : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+          ? 'http://localhost:3000'
+          : 'https://storyhub.xpernex.com')
     : 'https://storyhub.xpernex.com');
 
 export const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL ||
-  (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? 'http://localhost:3001'
+  (typeof window !== 'undefined'
+    ? (window.location.hostname === '44.205.31.67'
+        ? `http://${window.location.hostname}:3001`
+        : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+          ? 'http://localhost:3001'
+          : 'https://consolestoryhub.xpernex.com')
     : 'https://consolestoryhub.xpernex.com');
 
 // Safaricom SDP / Subscription Config
