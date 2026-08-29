@@ -112,7 +112,6 @@ export default function Homepage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      /* [SUBSCRIPTION CHECK COMMENTED FOR TESTING]
       const isSub = localStorage.getItem('storyhub_subscribed') === 'true';
       const params = new URLSearchParams(window.location.search);
       const bypass = params.get('preview') === 'true' || params.get('admin') === 'true' || params.get('demo') === 'true';
@@ -123,9 +122,7 @@ export default function Homepage() {
         router.replace(`/subscribe${query}`);
         return;
       }
-      */
 
-      const params = new URLSearchParams(window.location.search);
       setActiveCategory(params.get('category') || '');
     }
   }, [router]);

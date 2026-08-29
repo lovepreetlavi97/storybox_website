@@ -42,7 +42,6 @@ export default function FreeDemoPage() {
     const todayKey = `demo_listens_${new Date().toISOString().split('T')[0]}`;
     const currentCount = parseInt(localStorage.getItem(todayKey) || '0', 10);
 
-    /* [SUBSCRIPTION CHECK COMMENTED FOR TESTING]
     if (currentCount >= maxDemoListens) {
       openSubscribeModal(
         "Daily Demo Limit Reached",
@@ -50,7 +49,6 @@ export default function FreeDemoPage() {
       );
       return;
     }
-    */
 
     // Increment demo count if starting new audio
     if (currentAudio?._id !== audio._id) {
