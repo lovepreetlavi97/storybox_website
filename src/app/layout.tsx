@@ -9,11 +9,11 @@ export const metadata: Metadata = {
   description: 'Stream unlimited futuristic audiobooks, biography summaries, and audio stories in English.',
   icons: {
     icon: [
-      { url: '/storyhublogo.png', sizes: 'any', type: 'image/png' },
-      { url: '/icon.png', sizes: 'any', type: 'image/png' }
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/icon', sizes: '32x32', type: 'image/png' },
     ],
-    shortcut: '/storyhublogo.png',
-    apple: '/storyhublogo.png',
+    shortcut: '/favicon.svg',
+    apple: '/apple-icon',
   },
 };
 

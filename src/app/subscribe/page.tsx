@@ -86,7 +86,7 @@ export default function SubscribePage() {
 
         {/* BRAND TITLE */}
         <div className="space-y-2 sm:space-y-2.5 w-full">
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight bg-gradient-to-b from-[#FFF3BF] via-[#E5B54E] to-[#A87B1D] bg-clip-text text-transparent drop-shadow-sm leading-none">
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight bg-gradient-to-b from-[#FFF3BF] via-[#E5B54E] to-[#A87B1D] bg-clip-text text-transparent drop-shadow-sm leading-tight pb-1.5 pt-0.5">
             StoryHub
           </h1>
 
