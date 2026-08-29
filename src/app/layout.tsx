@@ -7,6 +7,14 @@ import { Player } from '@/components/features';
 export const metadata: Metadata = {
   title: 'StoryHub - Listen to Premium Audiobooks & Stories',
   description: 'Stream unlimited futuristic audiobooks, biography summaries, and audio stories in English.',
+  icons: {
+    icon: [
+      { url: '/storyhublogo.png', sizes: 'any', type: 'image/png' },
+      { url: '/icon.png', sizes: 'any', type: 'image/png' }
+    ],
+    shortcut: '/storyhublogo.png',
+    apple: '/storyhublogo.png',
+  },
 };
 
 export const viewport: Viewport = {
